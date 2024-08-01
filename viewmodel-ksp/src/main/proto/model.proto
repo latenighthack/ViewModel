@@ -1,0 +1,96 @@
+syntax = "proto3";
+package com.latenighthack.viewmodel.codegen.v1;
+
+option java_package = "com.latenighthack.viewmodel.codegen.v1";
+
+message AllDeclaredViewModels {
+  repeated ViewModelDeclaration models = 1;
+}
+
+message ViewModelDeclaration {
+  string name = 1;
+
+  bool isNavigable = 3;
+  ClassDeclaration declaration = 4;
+  ViewModelState state = 5;
+  ViewModelArgs argsType = 6;
+  repeated ViewModelAction actions = 7;
+  repeated ViewModelMutation mutations = 8;
+  repeated ViewModelListDeclaration lists = 9;
+  repeated ViewModelChildDeclaration children = 10;
+  repeated ViewModelChildDeclaration ignoredChildren = 11;
+  string navigationMethodName = 12;
+  string webPath = 13;
+}
+
+message ViewModelState {
+  ClassDeclaration type = 1;
+  repeated ViewModelStateProperty properties = 2;
+}
+
+message ViewModelStateProperty {
+  string name = 1;
+  Type type = 2;
+}
+
+message ViewModelArgs {
+  ClassDeclaration type = 1;
+  repeated ViewModelArgsProperty properties = 2;
+}
+
+message ViewModelArgsProperty {
+  string name = 1;
+  Type type = 2;
+  bool isRoute = 3;
+}
+
+message ViewModelAction {
+  ActionName name = 1;
+  string methodName = 2;
+  FunctionDeclaration function = 3;
+  bool isSuspend = 4;
+  repeated string throws = 5;
+  repeated ClassDeclaration navigationTargets = 6;
+}
+
+message ViewModelMutation {
+  ActionName name = 1;
+  string methodName = 2;
+  Type parameter_type = 3;
+  string parameter_name = 4;
+  bool isSuspend = 5;
+  FunctionDeclaration function = 6;
+  repeated ClassDeclaration navigationTargets = 7;
+}
+
+message ViewModelListDeclaration {
+  string propertyName = 1;
+  Type propertyType = 2;
+  repeated ClassDeclaration allowableTypes = 3;
+  string resolvedDeltaType = 4;
+}
+
+message ViewModelChildDeclaration {
+  string propertyName = 1;
+  ClassDeclaration type = 2;
+}
+
+message ActionName {
+  string noun = 1;
+  string verb = 2;
+}
+
+message Type {
+  string simpleName = 1;
+  string qualifiedName = 2;
+}
+
+message ClassDeclaration {
+  string simpleName = 1;
+  string qualifiedName = 2;
+}
+
+message FunctionDeclaration {
+  string simpleName = 1;
+  string qualifiedName = 2;
+}

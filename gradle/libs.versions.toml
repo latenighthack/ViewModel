@@ -1,0 +1,90 @@
+[versions]
+autoService = "1.1.1"
+autoServiceKsp = "1.10"
+binaryCompatibilityValidator = "0.14.0"
+coroutines = "1.8.1"
+detekt = "1.23.6"
+junit = "4.13.2"
+kctfork = "0.4.1"
+kotlin = "2.0.0"
+kotlinPoet = "1.17.0"
+kspVersion = "2.0.0-1.0.22"
+agp = "8.2.2"
+android-compileSdk = "34"
+android-minSdk = "24"
+android-targetSdk = "34"
+androidx-activityCompose = "1.9.0"
+androidx-appcompat = "1.7.0"
+androidx-constraintlayout = "2.1.4"
+androidx-core-ktx = "1.13.1"
+androidx-espresso-core = "3.5.1"
+androidx-material = "1.12.0"
+androidx-test-junit = "1.1.5"
+compose-plugin = "1.6.11"
+ktor = "2.3.11"
+ktbuf = "1.0.0"
+logback = "1.5.6"
+
+groupId = "com.latenighthack.viewmodel"
+viewmodel = "0.0.2"
+viewmodelKsp = "0.0.2-1.0.22"
+viewmodelCompiler = "0.0.2-2.0.0"
+viewmodelGradle = "0.0.2"
+viewmodelAnnotations = "0.0.2"
+
+viewmodelGradlePlugin = "0.0.2-2.0.0"
+ktorVersion = "2.3.11"
+mockk = "1.13.11"
+mockito-kotlin = "4.1.0"
+gradleMavenPublishPlugin = "0.28.0"
+vannikMavenPublish = "0.28.0"
+
+[libraries]
+android-build-gradle = "com.android.tools.build:gradle:8.2.2"
+auto-service-ksp = { module = "dev.zacsweers.autoservice:auto-service-ksp", version.ref = "autoServiceKsp" }
+ktbuf = { module = "com.latenighthack.ktbuf:ktbuf-library", version.ref = "ktbuf" }
+autoService = { module = "com.google.auto.service:auto-service", version.ref = "autoService" }
+gradle-maven-publish-plugin = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "gradleMavenPublishPlugin" }
+kotlin-gradle-plugin-api = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin-api", version.ref = "kotlin" }
+viewmodel-gradle-plugin = { module = "com.latenighthack.viewmodel:viewmodel-gradle-plugin", version.ref = "viewmodelGradlePlugin" }
+junit = { module = "junit:junit", version.ref = "junit" }
+kctfork-core = { module = "dev.zacsweers.kctfork:core", version.ref = "kctfork" }
+kctfork-ksp = { module = "dev.zacsweers.kctfork:ksp", version.ref = "kctfork" }
+kotlin-compiler-embeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "kotlin" }
+kotlin-serialization = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
+kotlinPoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinPoet" }
+kotlinPoet-ksp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "kotlinPoet" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+kotlinx-coroutines-core-native = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-native", version.ref = "coroutines" }
+kotlinx-coroutines-core-common = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-common", version.ref = "coroutines" }
+kotlinx-serialization-runtime-js = "org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.20.0"
+kspApi = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "kspVersion" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+
+licensee-gradle-plugin = "app.cash.licensee:licensee-gradle-plugin:1.11.0"
+logbackClassic = "ch.qos.logback:logback-classic:1.5.6"
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito-kotlin" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core-ktx" }
+androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-junit" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidx-espresso-core" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidx-appcompat" }
+androidx-material = { group = "com.google.android.material", name = "material", version.ref = "androidx-material" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "androidx-constraintlayout" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
+logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+
+[plugins]
+binaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binaryCompatibilityValidator" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+kspPlugin = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
+mavenPublish = { id = "com.vanniktech.maven.publish", version.ref = "vannikMavenPublish" }
+androidApplication = { id = "com.android.application", version.ref = "agp" }
+androidLibrary = { id = "com.android.library", version.ref = "agp" }
+jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
