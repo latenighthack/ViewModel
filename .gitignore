@@ -6,3 +6,10 @@ build/
 local.properties
 .DS_Store
 .editorconfig
+/.build
+/Packages
+xcuserdata/
+DerivedData/
+.swiftpm/configuration/registries.json
+.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
+.netrc

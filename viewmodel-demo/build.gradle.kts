@@ -1,11 +1,5 @@
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
-buildscript {
-    dependencies {
-        classpath(libs.viewmodel.gradle.plugin)
-    }
-}
-
 plugins {
     kotlin("multiplatform")
     id("com.android.application")

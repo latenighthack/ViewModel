@@ -1,3 +1,9 @@
+buildscript {
+    dependencies {
+        classpath(libs.viewmodel.gradle.plugin)
+    }
+}
+
 plugins {
     kotlin("multiplatform")
     id("com.google.devtools.ksp") version "2.0.0-1.0.22"
