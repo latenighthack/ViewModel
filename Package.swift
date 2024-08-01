@@ -16,7 +16,7 @@ let package = Package(
         
     ],
     dependencies: [
-        .package(name: "ViewModelCore", path: "./viewmodel-lib/ViewModelCore"),
+        .package(name: "ViewModelCore", url: "https://latenighthack.com/ViewModelCore")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
