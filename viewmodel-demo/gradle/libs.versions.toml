@@ -1,0 +1,25 @@
+[versions]
+agp = "8.2.2"
+kotlin = "2.0.0"
+coroutines = "1.8.1"
+ksp = "2.0.0-1.0.22"
+ktbuf = "1.0.0"
+viewmodel = "0.0.3"
+viewmodelGradlePlugin = "0.0.3-2.0.0"
+protobuf = "0.9.4"
+
+[libraries]
+ktbuf = { module = "com.latenighthack.ktbuf:ktbuf-library", version.ref = "ktbuf" }
+viewmodel-annotations = { module = "com.latenighthack.viewmodel:viewmodel-annotations", version.ref = "viewmodel" }
+viewmodel-library = { module = "com.latenighthack.viewmodel:viewmodel-lib", version.ref = "viewmodel" }
+coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+
+[plugins]
+androidApplication = { id = "com.android.application", version.ref = "agp" }
+androidLibrary = { id = "com.android.library", version.ref = "agp" }
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+viewmodel = { id = "com.latenighthack.viewmodel", version.ref = "viewmodelGradlePlugin" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobuf" }

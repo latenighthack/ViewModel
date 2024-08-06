@@ -1,14 +1,29 @@
-buildscript {
-    dependencies {
-        classpath(libs.viewmodel.gradle.plugin)
-    }
+plugins {
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.protobuf)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.viewmodel)
 }
 
-plugins {
-    kotlin("multiplatform")
-    id("com.google.devtools.ksp") version "2.0.0-1.0.22"
-    id("com.android.library")
-    id("com.latenighthack.viewmodel")
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.20.1"
+    }
+
+    generateProtoTasks {
+        all().forEach {
+            it.builtins {
+//                remove("java")
+            }
+
+            it.plugins {
+                create("kt") {
+                    outputSubDir = "kotlin"
+                }
+            }
+        }
+    }
 }
 
 viewmodel {
@@ -21,7 +36,6 @@ kotlin {
     js(IR) {
         browser {
         }
-//        binaries.executable() // not applicable to BOTH, see details below
     }
     androidTarget {
         publishLibraryVariants("release", "debug")
@@ -30,42 +44,55 @@ kotlin {
     iosX64()
     iosSimulatorArm64()
 
-    listOf(
-        iosX64(),
+    listOf(iosX64(),
         iosArm64(),
         iosSimulatorArm64(),
     ).forEach {
         it.binaries.framework {
-            baseName = "core"
+            baseName = "Core"
         }
     }
-    applyDefaultHierarchyTemplate()
+
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(projects.viewmodelAnnotations)
-                implementation(projects.viewmodelLib)
-                implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.viewmodel.annotations)
+                implementation(libs.viewmodel.library)
+                implementation(libs.coroutines.core)
             }
         }
         val androidMain by getting {
             dependencies {
-                implementation(projects.viewmodelLib)
-                implementation(libs.kotlinx.coroutines.android)
+                implementation(libs.viewmodel.library)
+                implementation(libs.coroutines.android)
             }
         }
 
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
+        val iosX64Main by getting {
+            dependencies {
+                api(libs.viewmodel.library)
+            }
+        }
+        val iosArm64Main by getting {
+            dependencies {
+                api(libs.viewmodel.library)
+            }
+        }
+        val iosSimulatorArm64Main by getting {
+            dependencies {
+                api(libs.viewmodel.library)
+            }
+        }
         val jsMain by getting {
             dependencies {
+                implementation(libs.viewmodel.annotations)
+                implementation(libs.viewmodel.library)
+                implementation(libs.coroutines.core)
             }
         }
-
-        val iosMain by getting
     }
 }
+
 val javadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
 }
@@ -79,6 +106,8 @@ android {
     }
     namespace = "com.latenighthack.viewmodel.demo.core"
 }
+
 dependencies {
-    implementation(project(":viewmodel-lib"))
+    implementation(libs.viewmodel.library)
+    implementation(libs.ktbuf)
 }

@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package com.latenighthack.dummy.v1;
+
+option go_package = "latenighthack.com/dummy/v1;dummypb";
+option java_package = "com.latenighthack.dummy.v1";
+
+message Dummy {
+  int32 value = 1;
+}

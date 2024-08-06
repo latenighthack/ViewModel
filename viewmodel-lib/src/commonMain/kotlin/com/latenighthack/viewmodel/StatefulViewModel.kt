@@ -4,7 +4,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.getAndUpdate
 
-public abstract class StatefulViewModel<State>(final override val initialState: State) : ViewModel<State> {
+public abstract class StatefulViewModel<State>(initialState: State) : ViewModel<State> {
+    override val initialState: State = initialState
+
     private val internalState = MutableStateFlow(initialState)
 
     override val state: Flow<State> get() = internalState

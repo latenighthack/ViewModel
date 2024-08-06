@@ -29,6 +29,7 @@ mavenPublishing {
     }
 }
 
+
 kotlin {
     jvmToolchain(17)
     explicitApi()
@@ -37,13 +38,6 @@ kotlin {
         // Common compiler options applied to all Kotlin source sets
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
-//    if (libs.versions.ktorVersion
-//            .get()
-//            .startsWith("3.")
-//    ) {
-//        @OptIn(ExperimentalWasmDsl::class)
-//        wasmJs()
-//    }
     js(IR) {
         browser()
     }
@@ -54,6 +48,14 @@ kotlin {
     iosX64()
     iosSimulatorArm64()
 
+//    metadata {
+//        compilations.forEach {
+//            it.allKotlinSourceSets.forEach {
+//                it.kotlin.srcDir("src/metadataMain/kotlin")
+//            }
+//        }
+//    }
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -63,14 +65,21 @@ kotlin {
             baseName = "ViewModelCore"
         }
     }
-    applyDefaultHierarchyTemplate()
     sourceSets {
+        all {
+            languageSettings {
+                optIn("kotlin.experimental.ExperimentalObjCName")
+                optIn("kotlinx.cinterop.ExperimentalForeignApi")
+            }
+        }
+
         val commonMain by getting {
             dependencies {
                 api(projects.viewmodelAnnotations)
                 implementation(libs.kotlinx.coroutines.core)
             }
         }
+
         val androidMain by getting {
             dependencies {
                 implementation(libs.kotlinx.coroutines.android)
@@ -84,8 +93,6 @@ kotlin {
             dependencies {
             }
         }
-
-        val iosMain by getting
     }
 }
 val javadocJar by tasks.registering(Jar::class) {
@@ -156,10 +163,11 @@ publishing {
 }
 
 multiplatformSwiftPackage {
+    distributionMode { local() }
     packageName("ViewModelCore")
     swiftToolsVersion("5.3")
     targetPlatforms {
         iOS { v("13") }
     }
-    outputDirectory(File(projectDir, "ViewModelCore"))
+    outputDirectory(File(projectDir, "../"))
 }

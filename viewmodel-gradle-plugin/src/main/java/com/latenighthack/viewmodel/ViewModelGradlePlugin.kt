@@ -15,7 +15,7 @@ class ViewModelGradlePlugin : Plugin<Project> {
         const val GROUP_NAME = "com.latenighthack.viewmodel"
         const val ARTIFACT_NAME = "compiler-plugin"
         const val COMPILER_PLUGIN_ID = "viewmodelPlugin"
-        const val VIEWMODEL_VERSION = "0.0.2" // remember to bump this version before any release!
+        const val VIEWMODEL_VERSION = "0.0.3" // remember to bump this version before any release!
         const val SNAPSHOT = ""
         const val MIN_KSP_VERSION = "1.0.21"
         const val MIN_KOTLIN_VERSION = "2.0.0"

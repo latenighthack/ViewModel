@@ -67,7 +67,6 @@ kotlin {
             baseName = "library"
         }
     }
-    applyDefaultHierarchyTemplate()
 
     sourceSets {
         val commonMain by getting {
@@ -88,8 +87,6 @@ kotlin {
         val iosX64Main by getting
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
-
-        val iosMain by getting
     }
 }
 
@@ -117,11 +114,10 @@ publishing {
     publications {
         create<MavenPublication>("default") {
             artifact(tasks["sourcesJar"])
-            // artifact(tasks["javadocJar"])
 
             pom {
                 name.set(project.name)
-                description.set("ViewModel c")
+                description.set("ViewModel annotations")
                 url.set("https://github.com/latenighthack/viewmodel")
 
                 licenses {

@@ -26,13 +26,13 @@ ktbuf = "1.0.0"
 logback = "1.5.6"
 
 groupId = "com.latenighthack.viewmodel"
-viewmodel = "0.0.2"
-viewmodelKsp = "0.0.2-1.0.22"
-viewmodelCompiler = "0.0.2-2.0.0"
-viewmodelGradle = "0.0.2"
-viewmodelAnnotations = "0.0.2"
+viewmodel = "0.0.3"
+viewmodelKsp = "0.0.3-1.0.22"
+viewmodelCompiler = "0.0.3-2.0.0"
+viewmodelGradle = "0.0.3"
+viewmodelAnnotations = "0.0.3"
 
-viewmodelGradlePlugin = "0.0.2-2.0.0"
+viewmodelGradlePlugin = "0.0.3-2.0.0"
 ktorVersion = "2.3.11"
 mockk = "1.13.11"
 mockito-kotlin = "4.1.0"
@@ -46,7 +46,7 @@ ktbuf = { module = "com.latenighthack.ktbuf:ktbuf-library", version.ref = "ktbuf
 autoService = { module = "com.google.auto.service:auto-service", version.ref = "autoService" }
 gradle-maven-publish-plugin = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "gradleMavenPublishPlugin" }
 kotlin-gradle-plugin-api = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin-api", version.ref = "kotlin" }
-viewmodel-gradle-plugin = { module = "com.latenighthack.viewmodel:viewmodel-gradle-plugin", version.ref = "viewmodelGradlePlugin" }
+viewmodel-gradle-plugin = { module = "com.latenighthack.viewmodel:gradle-plugin", version.ref = "viewmodelGradlePlugin" }
 junit = { module = "junit:junit", version.ref = "junit" }
 kctfork-core = { module = "dev.zacsweers.kctfork:core", version.ref = "kctfork" }
 kctfork-ksp = { module = "dev.zacsweers.kctfork:ksp", version.ref = "kctfork" }

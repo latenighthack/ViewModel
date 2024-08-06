@@ -2,20 +2,34 @@
 import PackageDescription
 
 let package = Package(
-    name: "ViewModelCore",
-    platforms: [
-        .iOS(.v13)
-    ],
+    name: "ViewModelSupport",
+    platforms: [.iOS(.v13)],
     products: [
         .library(
-            name: "ViewModelCore",
-            targets: ["ViewModelCore"]
+            name: "ViewModelSupportCore",
+            targets: ["ViewModelSupportCore"]
         ),
+        .library(
+            name: "ViewModelSupport",
+            targets: ["ViewModelSupport"]
+        )
     ],
     targets: [
-        .binaryTarget(
-            name: "ViewModelCore",
-            path: "./ViewModelCore.xcframework"
+        .target(
+            name: "ViewModelSupportCoreObjC",
+            path: "ViewModelSupportCoreObjC",
+            publicHeadersPath: "."
         ),
-    ]
+        .target(
+            name: "ViewModelSupportCore",
+            dependencies: [.target(name: "ViewModelSupportCoreObjC")],
+            path: "ViewModelSupportCoreObjC"
+        ),
+        .target(
+            name: "ViewModelSupport",
+            dependencies: [.target(name: "ViewModelSupport")],
+            path: "ViewModelSupport"
+        )
+    ],
+    swiftLanguageVersions: [.v5]
 )

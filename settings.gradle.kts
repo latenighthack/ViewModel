@@ -19,7 +19,7 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id == "com.latenighthack.viewmodel") {
-                useModule("com.latenighthack.viewmodel:gradle-plugin:${requested.version}")
+                useModule("com.latenighthack.viewmodel:gradle-plugin:0.0.3-2.0.0")//${requested.version}")
             }
         }
     }
@@ -35,6 +35,5 @@ include(":viewmodel-gradle-plugin")
 include(":viewmodel-ksp")
 include(":viewmodel-compiler-plugin")
 include(":viewmodel-lib")
-include(":viewmodel-demo")
-include(":viewmodel-demo:core")
 include(":viewmodel-annotations")
+//includeBuild("viewmodel-demo")

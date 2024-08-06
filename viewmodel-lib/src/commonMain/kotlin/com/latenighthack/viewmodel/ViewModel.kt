@@ -4,6 +4,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
 import kotlin.js.JsName
+import kotlin.native.ObjCName
+
+public expect interface ViewModelNative
+public expect interface NavigableViewModelNative
 
 @OptIn(ExperimentalJsExport::class)
 @JsExport

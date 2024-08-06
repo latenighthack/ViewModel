@@ -1,0 +1,3 @@
+language = Objective-C
+package = com.latenighthack.viewmodel.objc
+headers = ViewModelSupportCoreObjC.h

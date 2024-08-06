@@ -1,0 +1,4 @@
+package com.latenighthack.viewmodel
+
+public actual interface ViewModelNative
+public actual interface NavigableViewModelNative

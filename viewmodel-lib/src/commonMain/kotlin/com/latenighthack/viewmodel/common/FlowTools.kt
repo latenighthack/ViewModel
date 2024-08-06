@@ -1,7 +1,6 @@
 package com.latenighthack.viewmodel.common
 
 import com.latenighthack.viewmodel.ViewModel
-import com.latenighthack.viewmodel.common.GlobalDispatcher
 import com.latenighthack.viewmodel.list.Delta
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*

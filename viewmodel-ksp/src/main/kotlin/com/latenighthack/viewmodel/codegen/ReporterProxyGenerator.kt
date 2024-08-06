@@ -63,6 +63,39 @@ class ReporterProxyGenerator(
         codeGenerator.createNewFile(
             dependencies,
             "com.latenighthack.viewmodel.proxy",
+            "DelegatingNavigator",
+            "kt"
+        ).apply {
+            val navigations = viewModels
+                .mapNotNull { vm ->
+                    if (!vm.isNavigable) {
+                        null
+                    } else {
+                        """
+                        |    override fun navigateTo(${vm.navigationMethodName}: ${vm.argsType?.type?.qualifiedName}) {
+                        |        delegatedNavigator.navigateTo(${vm.navigationMethodName})
+                        |    }
+                        """.trimMargin()
+                    }
+                }
+                .joinToString("\n\n")
+
+            writeln(
+                """
+                |package com.latenighthack.viewmodel.proxy
+                |
+                |import ${navigatorClassName}
+                |
+                |abstract class DelegatingNavigator(private val delegatedNavigator: ${navigatorClassName}) : ${navigatorClassName} {
+                |$navigations
+                |}
+                """.trimMargin()
+            )
+        }
+
+        codeGenerator.createNewFile(
+            dependencies,
+            "com.latenighthack.viewmodel.proxy",
             "ReportingNavigator",
             "kt"
         ).apply {
@@ -74,6 +107,7 @@ class ReporterProxyGenerator(
                         """
                         |    override fun navigateTo(${vm.navigationMethodName}: ${vm.argsType?.type?.qualifiedName}) {
                         |        NavigationReporter.trackNavigationTo${vm.navigationMethodName.toUpperCamelCase()}(reporter)
+                        |        super.navigateTo(${vm.navigationMethodName})
                         |    }
                         """.trimMargin()
                     }
@@ -87,7 +121,7 @@ class ReporterProxyGenerator(
                 |import ${navigatorClassName}
                 |import com.latenighthack.viewmodel.common.ViewModelReporter
                 |
-                |abstract class ReportingNavigator(private val reporter: ViewModelReporter) : Navigator {
+                |abstract class ReportingNavigator(private val reporter: ViewModelReporter, delegatedNavigator: ${navigatorClassName}) : DelegatingNavigator(delegatedNavigator) {
                 |$navigations
                 |}
                 """.trimMargin()

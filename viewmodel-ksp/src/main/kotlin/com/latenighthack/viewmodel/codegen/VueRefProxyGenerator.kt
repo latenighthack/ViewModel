@@ -42,7 +42,7 @@ class VueRefProxyGenerator(
                 |            unmountCallback,
                 |            bindingScope,
                 |            ${it.name.toUpperCamelCase()}ReporterProxy(
-                |                viewModelCreator.${it.name.toCamelCase()}ViewModel(jsonTo${it.name.toUpperCamelCase()}Args(props), resolver, navigator, bindingScope, extras), core.viewModelReporter
+                |                viewModelCreator.${it.name.toCamelCase()}ViewModel(jsonTo${it.name.toUpperCamelCase()}Args(props), resolver, navigator, bindingScope, extras), reporter
                 |            )
                 |        )
                 |    }
@@ -52,7 +52,7 @@ class VueRefProxyGenerator(
             .filter { it.isNavigable }
             .joinToString("\n") {
                 """
-                |    fun ${it.name.toCamelCase()}ViewModel(args: ${it.argsType?.type?.qualifiedName}, resolver: ${resolverClassName}, navigator: Navigator, bindingScope: com.latenighthack.viewmodel.common.BindingScope, extras: dynamic): ${it.declaration?.qualifiedName}
+                |    fun ${it.name.toCamelCase()}ViewModel(args: ${it.argsType?.type?.qualifiedName}, resolver: ${resolverClassName}, navigator: ${navigatorClassName}, bindingScope: com.latenighthack.viewmodel.common.BindingScope, extras: dynamic): ${it.declaration?.qualifiedName}
                 """.trimMargin()
             }
 
@@ -79,8 +79,9 @@ class VueRefProxyGenerator(
                     |import kotlin.js.JsExport
                     |import kotlin.js.json
                     |
+                    |@kotlin.js.ExperimentalJsExport
                     |@JsExport
-                    |class ViewModelVueCreator(val viewModelCreator: IViewModelCreator) {
+                    |class ViewModelVueCreator(val viewModelCreator: IViewModelCreator, val reporter: ViewModelReporter) {
                     |
                     |${vueModelCreatorMethods}
                     |}
@@ -347,6 +348,7 @@ class VueRefProxyGenerator(
                     |$argConverter
                     |
                     |@OptIn(DelicateCoroutinesApi::class)
+                    |@kotlin.js.ExperimentalJsExport
                     |@JsExport
                     |fun internal${proxyClassName}(props: dynamic, ref: (dynamic) -> dynamic, unmountCallback: (() -> Unit) -> Unit, bindingScope: BindingScope, vm: ${vmInterfaceName}): dynamic {
                     |    val vmObject = object {}.asDynamic()

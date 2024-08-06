@@ -10,9 +10,17 @@ interface IHomeViewModel: NavigableViewModel<IHomeViewModel.State, IHomeViewMode
     data class State(val text: String)
 
     class Args : NavigatorArgs()
+
+    suspend fun onStartTapped()
 }
 
 class HomeViewModel(
     override val args: IHomeViewModel.Args
 ) : IHomeViewModel, StatefulViewModel<IHomeViewModel.State>(IHomeViewModel.State("Hello world!")) {
+
+    override suspend fun onStartTapped() {
+        update {
+            copy(text = "Updated World!")
+        }
+    }
 }

@@ -49,7 +49,7 @@ val enableSigning = project.hasProperty("signingInMemoryKey")
 mavenPublishing {
     coordinates(
         libs.versions.groupId.get(),
-        "viewmodel-gradle-plugin",
+        "gradle-plugin",
         "${libs.versions.viewmodelGradle.get()}-${libs.versions.kotlin.get()}"
     )
     // publishToMavenCentral(SonatypeHost.S01) for publishing through s01.oss.sonatype.org
@@ -64,7 +64,7 @@ publishing {
             from(components["java"])
 
             pom {
-                name.set("viewmodel-gradle-plugin")
+                name.set("gradle-plugin")
                 description.set("Gradle plugin for ViewModel")
                 url.set("https://github.com/latenighthack/viewmodel")
 

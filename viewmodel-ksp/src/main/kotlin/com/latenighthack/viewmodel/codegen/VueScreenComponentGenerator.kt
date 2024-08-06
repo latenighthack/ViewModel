@@ -35,10 +35,10 @@ class VueScreenComponentGenerator(
                 |<template v-for="item in vm.${list.propertyName}">
                 |${
                     if (list.allowableTypes.size == 1) {
-                        "    <${allVms[list.allowableTypes.first().qualifiedName]!!.name.toUpperCamelCase()}ViewVue :model=\"item\" />"
+                        "    <${allVms[list.allowableTypes.first().qualifiedName]!!.name.toUpperCamelCase()}Vue :model=\"item\" />"
                     } else {
                         list.allowableTypes.joinToString("\n") {
-                            "    <${allVms[it.qualifiedName]!!.name.toUpperCamelCase()}ViewVue :model=\"item\" v-if=\"item.__type == ${it.qualifiedName.hashCode()}\" />"
+                            "    <${allVms[it.qualifiedName]!!.name.toUpperCamelCase()}Vue :model=\"item\" v-if=\"item.__type == ${it.qualifiedName.hashCode()}\" />"
                         }
                     }
                 }
@@ -55,7 +55,7 @@ class VueScreenComponentGenerator(
                 val childVm = allVms[child.type?.qualifiedName]!!
 
                 """
-                |<${childVm.name.toUpperCamelCase()}ViewVue :model="vm.${child.propertyName}" />
+                |<${childVm.name.toUpperCamelCase()}Vue :model="vm.${child.propertyName}" />
                 """.trimMargin()
             }
 
@@ -128,11 +128,11 @@ class VueScreenComponentGenerator(
                     |<style scoped>
                     |</style>
                     |
-                    |<script setup lang="js">
+                    |<script setup>
                     |import { routeLocationKey, useRoute } from "vue-router";
                     |import { vueModels } from "../../app-web";
                     |import { inject, shallowReactive, onUnmounted, defineProps } from "vue";
-                    |${allChildTypes.joinToString("\n") { "import ${it}ViewVue from \"./${it}View.vue\";" }}
+                    |${allChildTypes.joinToString("\n") { "import ${it}Vue from \"./${it}.vue\";" }}
                     |
                     |const route = useRoute();
                     |const core = inject("core");
@@ -150,7 +150,7 @@ class VueScreenComponentGenerator(
         val componentImports = viewModels
             .filter { it.isNavigable }
             .joinToString("\n") {
-                "import ${it.name.toUpperCamelCase()}ViewVue from \"../gen/components/${it.name.toUpperCamelCase()}View.vue\";"
+                "import ${it.name.toUpperCamelCase()}Vue from \"../gen/components/${it.name.toUpperCamelCase()}.vue\";"
             }
 
         fun toPath(vm: ViewModelDeclaration): String {
@@ -167,7 +167,7 @@ class VueScreenComponentGenerator(
         val routes = viewModels
             .filter { it.isNavigable }
             .joinToString("\n") { vm ->
-                "    { name: \"${vm.name.toCamelCase()}\", path: \"${toPath(vm)}\", components: { main: ${vm.name.toUpperCamelCase()}ViewVue }, props: true, " +
+                "    { name: \"${vm.name.toCamelCase()}\", path: \"${toPath(vm)}\", components: { main: ${vm.name.toUpperCamelCase()}Vue }, props: true, " +
                         "params: {${
                             vm.argsType?.properties?.filter { it.isRoute }
                                 ?.joinToString(", ") { "\"${it.name}\": ${it.type?.argTypeName}" }

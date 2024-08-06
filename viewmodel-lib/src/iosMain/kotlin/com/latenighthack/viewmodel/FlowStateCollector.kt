@@ -25,6 +25,7 @@ public class FlowStateCollector<T : ViewModel<U>, U : Any>(
         return currentVms?.get(index)
     }
 
+    @Suppress("UNCHECKED_CAST")
     public fun getState(index: Int): U? {
         return currentState?.get(index) as U?
     }

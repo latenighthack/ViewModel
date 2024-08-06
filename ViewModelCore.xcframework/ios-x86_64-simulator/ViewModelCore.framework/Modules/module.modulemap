@@ -1,8 +1,0 @@
-framework module "ViewModelCore" {
-    umbrella header "ViewModelCore.h"
-
-    export *
-    module * { export * }
-
-    use Foundation
-}
