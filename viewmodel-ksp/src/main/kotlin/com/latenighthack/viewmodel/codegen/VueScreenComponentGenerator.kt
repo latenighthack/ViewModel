@@ -38,7 +38,7 @@ class VueScreenComponentGenerator(
                         "    <${allVms[list.allowableTypes.first().qualifiedName]!!.name.toUpperCamelCase()}Vue :model=\"item\" />"
                     } else {
                         list.allowableTypes.joinToString("\n") {
-                            "    <${allVms[it.qualifiedName]!!.name.toUpperCamelCase()}Vue :model=\"item\" v-if=\"item.__type == ${it.qualifiedName.hashCode()}\" />"
+                            "    <${allVms[it.qualifiedName]!!.name.toUpperCamelCase()}Vue :model=\"item\" v-if=\"is${allVms[it.qualifiedName]!!.name.toUpperCamelCase()}(item)\" />"
                         }
                     }
                 }

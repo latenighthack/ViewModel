@@ -257,10 +257,11 @@ class ReporterProxyGenerator(
                     |package com.latenighthack.viewmodel.proxy
                     |
                     |import com.latenighthack.viewmodel.common.*
+                    |import com.latenighthack.viewmodel.list.*
                     |import com.latenighthack.viewmodel.common.ViewModelReporter
                     |import kotlinx.coroutines.flow.Flow
                     |
-                    |class $proxyClassName(
+                    |public class $proxyClassName(
                     |    private val original: $vmInterfaceName,
                     |    private val reporter: ViewModelReporter,
                     |    $nonNavigableScreenName

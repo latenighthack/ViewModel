@@ -180,7 +180,7 @@ class VueRefProxyGenerator(
                         allVms[it.qualifiedName]!!
                     }
                     .joinToString("\n") {
-                        "                    is ${it.declaration!!.qualifiedName} -> internal${it.name.toUpperCamelCase()}VueModel(null, core, ref, { jobCancel -> saveActiveJob(jobCancel) }, bindingScope, value)"
+                        "                    is ${it.declaration!!.qualifiedName} -> internal${it.name.toUpperCamelCase()}VueModel(null, ref, { jobCancel -> saveActiveJob(jobCancel) }, bindingScope, value)"
                     }
 
                 """
@@ -283,7 +283,7 @@ class VueRefProxyGenerator(
                 val childVm = allVms[it.type!!.qualifiedName]!!
 
                 """
-                |    vmObject["${it.propertyName}"] = internal${childVm.name.toUpperCamelCase()}VueModel(null, core, ref, unmountCallback, bindingScope, vm.${it.propertyName});
+                |    vmObject["${it.propertyName}"] = internal${childVm.name.toUpperCamelCase()}VueModel(null, ref, unmountCallback, bindingScope, vm.${it.propertyName});
                 """.trimMargin()
             }
             val ignoredChildren = vm.ignoredChildren.joinToString("\n\n") {
@@ -346,6 +346,11 @@ class VueRefProxyGenerator(
                     |import kotlin.js.json
                     |
                     |$argConverter
+                    |
+                    |@OptIn(DelicateCoroutinesApi::class)
+                    |@kotlin.js.ExperimentalJsExport
+                    |@JsExport
+                    |public fun is${vm.name.toUpperCamelCase()}(instance: dynamic): Boolean = instance.__type == ${vm.declaration.qualifiedName.hashCode()}
                     |
                     |@OptIn(DelicateCoroutinesApi::class)
                     |@kotlin.js.ExperimentalJsExport
