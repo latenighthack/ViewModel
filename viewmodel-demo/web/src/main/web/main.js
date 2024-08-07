@@ -4,10 +4,20 @@ import "./style.css";
 import App from "./App.vue";
 import router from "./router";
 
-window.com = module.exports["web"].com;
+const com = module.exports["web"].com;
 
-com.latenighthack.main("test.com", import.meta.env.VITE_API_SECURE != "false", router, (core, navigator) => {
+com.latenighthack.main("test.com", import.meta.env.VITE_API_SECURE != "false", router, (core, navigator, vueModels) => {
     createApp(App)
+        .use({
+            install: (app) => {
+                const $tools = {};
+
+                Object.assign($tools, module.exports["web"].com.latenighthack.viewmodel.vue);
+
+                app.config.globalProperties.$tools = $tools;
+            }
+        })
+        .provide("models", vueModels)
         .provide("core", core)
         .provide("navigator", navigator)
         .use(router)

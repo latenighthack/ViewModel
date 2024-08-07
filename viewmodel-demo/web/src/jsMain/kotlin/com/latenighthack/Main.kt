@@ -33,10 +33,10 @@ fun main(
             }
         }
     )
+    val navigator = WebNavigator(router)
 
-    window.asDynamic()["vueModels"] = vueModels
+    callback(core, navigator, vueModels)
 
-    startup(core, WebNavigator(router)) {
-        callback()
+    startup(core, navigator) {
     }
 }

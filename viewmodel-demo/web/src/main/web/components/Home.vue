@@ -4,8 +4,8 @@
 
     <ul>
       <template v-for="item in vm.items">
-        <li v-if="tools.isHomeListItemA(item)">{{ item.titleA }}</li>
-        <li v-if="tools.isHomeListItemB(item)">{{ item.titleB }}</li>
+        <li v-if="$tools.isHomeListItemA(item)">{{ item.titleA }}</li>
+        <li v-if="$tools.isHomeListItemB(item)">{{ item.titleB }}</li>
       </template>
     </ul>
 
@@ -21,14 +21,14 @@ import { useRoute } from "vue-router";
 import { inject, shallowReactive, onUnmounted, defineProps } from "vue";
 
 const route = useRoute();
+const models = inject("models");
 const core = inject("core");
 const navigator = inject("navigator");
 const query = route.query;
 
 const props = defineProps({
 });
-const tools = com.latenighthack.viewmodel.vue;
 
-const vm = window.vueModels.homeViewModel(Object.assign({}, props, query), core, navigator, shallowReactive, onUnmounted);
+const vm = models.homeViewModel(Object.assign({}, props, query), core, navigator, shallowReactive, onUnmounted);
 </script>
 
