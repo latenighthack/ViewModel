@@ -14,5 +14,5 @@ class ViewModelCreator: IViewModelCreator {
         navigator: Navigator,
         bindingScope: BindingScope,
         extras: dynamic
-    ) = HomeViewModel(args)
+    ) = HomeViewModel(args, resolver.simpleStore)
 }

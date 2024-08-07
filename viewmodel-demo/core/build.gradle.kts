@@ -58,12 +58,24 @@ kotlin {
             dependencies {
                 implementation(libs.viewmodel.annotations)
                 implementation(libs.viewmodel.library)
+                implementation(libs.ktstore.library)
+                implementation(libs.ktcrypto.library)
+                implementation(libs.ktbuf)
                 implementation(libs.coroutines.core)
+            }
+            kotlin {
+                srcDirs(
+                    "build/generated/source/proto/debug/kotlin",
+                    "build/generated/source/proto/release/kotlin",
+                )
             }
         }
         val androidMain by getting {
             dependencies {
                 implementation(libs.viewmodel.library)
+                implementation(libs.ktstore.library)
+                implementation(libs.ktcrypto.library)
+                implementation(libs.ktbuf)
                 implementation(libs.coroutines.android)
             }
         }
@@ -71,15 +83,24 @@ kotlin {
         val iosX64Main by getting {
             dependencies {
                 api(libs.viewmodel.library)
+                implementation(libs.ktstore.library)
+                implementation(libs.ktcrypto.library)
+                implementation(libs.ktbuf)
             }
         }
         val iosArm64Main by getting {
             dependencies {
                 api(libs.viewmodel.library)
+                implementation(libs.ktstore.library)
+                implementation(libs.ktcrypto.library)
+                implementation(libs.ktbuf)
             }
         }
         val iosSimulatorArm64Main by getting {
             dependencies {
+                implementation(libs.ktstore.library)
+                implementation(libs.ktcrypto.library)
+                implementation(libs.ktbuf)
                 api(libs.viewmodel.library)
             }
         }
@@ -87,6 +108,9 @@ kotlin {
             dependencies {
                 implementation(libs.viewmodel.annotations)
                 implementation(libs.viewmodel.library)
+                implementation(libs.ktstore.library)
+                implementation(libs.ktcrypto.library)
+                implementation(libs.ktbuf)
                 implementation(libs.coroutines.core)
             }
         }
@@ -109,5 +133,7 @@ android {
 
 dependencies {
     implementation(libs.viewmodel.library)
+    implementation(libs.ktstore.library)
+    implementation(libs.ktcrypto.library)
     implementation(libs.ktbuf)
 }

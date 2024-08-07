@@ -16,9 +16,11 @@ kotlin {
 
     sourceSets {
         androidMain.dependencies {
+            implementation(libs.ktstore.library)
             implementation(libs.viewmodel.library)
         }
         commonMain.dependencies {
+            implementation(libs.ktstore.library)
             implementation(projects.core)
         }
     }

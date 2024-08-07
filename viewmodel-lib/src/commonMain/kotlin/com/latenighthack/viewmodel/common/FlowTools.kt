@@ -32,7 +32,7 @@ public class BindingScope : CoroutineScope {
 
     override val coroutineContext: CoroutineContext =
         job + GlobalDispatcher.main() + CoroutineExceptionHandler { _, exception ->
-            println(">>> Let's GOOOO $exception\n${exception.stackTraceToString()}")
+            println(">>> (binding scope exception) $exception\n${exception.stackTraceToString()}")
         }
 
     public fun collect(flow: Flow<Any>, collector: (Any) -> Unit) {

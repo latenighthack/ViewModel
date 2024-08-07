@@ -1,5 +1,6 @@
 package com.latenighthack
 
+import com.latenighthack.ktstore.createStoreDelegate
 import com.latenighthack.viewmodel.common.ViewModelReporter
 import com.latenighthack.viewmodel.core.Core
 import com.latenighthack.viewmodel.startup
@@ -7,6 +8,7 @@ import com.latenighthack.viewmodel.vue.ViewModelVueCreator
 import kotlinx.browser.window
 import org.w3c.dom.get
 
+@OptIn(ExperimentalJsExport::class)
 @JsExport
 fun main(
     serverPath: String,
@@ -14,7 +16,7 @@ fun main(
     router: dynamic,
     callback: dynamic
 ) {
-    val core = Core()
+    val core = Core(createStoreDelegate("main_db"))
     val vueModels = ViewModelVueCreator(
         ViewModelCreator(),
         object : ViewModelReporter {

@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package com.latenighthack.storage.v1;
+
+option java_package = "com.latenighthack.storage.v1";
+
+message StoredId {
+  bytes raw_value = 1;
+}
+
+message StoredProperty {
+  StoredId id = 1;
+  string description = 2;
+}

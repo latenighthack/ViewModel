@@ -33,11 +33,13 @@ kotlin {
     sourceSets {
         jsMain.dependencies {
             implementation(libs.viewmodel.library)
+            implementation(libs.ktstore.library)
             implementation(projects.core)
             implementation(kotlin("stdlib-js"))
         }
         commonMain.dependencies {
             implementation(libs.viewmodel.library)
+            implementation(libs.ktstore.library)
             implementation(projects.core)
         }
     }

@@ -1,11 +1,23 @@
 package com.latenighthack.viewmodel.core
 
+import com.latenighthack.ktcrypto.ECDH
+import com.latenighthack.ktcrypto.PublicKey
+import com.latenighthack.ktcrypto.RNG
+import com.latenighthack.ktcrypto.Secp256r1
+import com.latenighthack.ktcrypto.Secp256r1KeyPair
+import com.latenighthack.ktcrypto.Secp256r1PublicKey
+import com.latenighthack.ktcrypto.encode
+import com.latenighthack.ktcrypto.generate
+import com.latenighthack.ktcrypto.randomBytes
+import com.latenighthack.ktcrypto.tools.toBase64String
+import com.latenighthack.storage.v1.StoredProperty
 import com.latenighthack.viewmodel.NavigableViewModel
 import com.latenighthack.viewmodel.NavigatorArgs
 import com.latenighthack.viewmodel.StatefulViewModel
 import com.latenighthack.viewmodel.ViewModel
 import com.latenighthack.viewmodel.annotations.DeclareViewModel
 import com.latenighthack.viewmodel.annotations.DeclareViewModelList
+import com.latenighthack.viewmodel.core.store.SimpleStore
 import com.latenighthack.viewmodel.list.Delta
 import com.latenighthack.viewmodel.list.flowListOf
 import kotlinx.coroutines.flow.Flow
@@ -42,20 +54,33 @@ class HomeListItemAViewModel(title: String) : IHomeListItemAViewModel, StatefulV
 class HomeListItemBViewModel(title: String) : IHomeListItemBViewModel, StatefulViewModel<IHomeListItemBViewModel.State>(IHomeListItemBViewModel.State(title))
 
 class HomeViewModel(
-    override val args: IHomeViewModel.Args
+    override val args: IHomeViewModel.Args,
+    val basicStore: SimpleStore
 ) : IHomeViewModel, StatefulViewModel<IHomeViewModel.State>(IHomeViewModel.State("Hello world!")) {
 
     override suspend fun onStartTapped() {
         update {
+            val id = RNG.randomBytes(8)
+
+            basicStore.saveProperty(StoredProperty {
+                id {
+                    rawValue = id
+                }
+                description = id.toBase64String()
+            })
+
             copy(text = "Updated World!")
         }
     }
 
-    override val items: Flow<Delta<IHomeListItemViewModel>> = flowListOf(
-        HomeListItemAViewModel("Item A1"),
-        HomeListItemAViewModel("Item A2"),
-        HomeListItemBViewModel("Item B1"),
-        HomeListItemBViewModel("Item B2"),
-        HomeListItemBViewModel("Item B3"),
-    )
+    override val items: Flow<Delta<IHomeListItemViewModel>> = flowListOf {
+        val key = Secp256r1KeyPair.generate()
+
+        basicStore.getAllProperties().map {
+            HomeListItemAViewModel(it.description)
+        } + listOf(
+            HomeListItemBViewModel("Pub Key ${key.publicKey.encode().toBase64String()}"),
+            HomeListItemBViewModel("Priv Key ${key.privateKey.encode().toBase64String()}")
+        )
+    }
 }

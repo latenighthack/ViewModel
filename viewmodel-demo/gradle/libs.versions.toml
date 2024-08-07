@@ -5,6 +5,8 @@ coroutines = "1.8.1"
 ksp = "2.0.0-1.0.22"
 ktbuf = "1.0.0"
 viewmodel = "0.0.4"
+ktstore = "0.0.1"
+ktcrypto = "0.0.1"
 viewmodelGradlePlugin = "0.0.4-2.0.0"
 protobuf = "0.9.4"
 
@@ -12,6 +14,8 @@ protobuf = "0.9.4"
 ktbuf = { module = "com.latenighthack.ktbuf:ktbuf-library", version.ref = "ktbuf" }
 viewmodel-annotations = { module = "com.latenighthack.viewmodel:viewmodel-annotations", version.ref = "viewmodel" }
 viewmodel-library = { module = "com.latenighthack.viewmodel:viewmodel-lib", version.ref = "viewmodel" }
+ktstore-library = { module = "com.latenighthack.ktstore:ktstore-library", version.ref = "ktstore" }
+ktcrypto-library = { module = "com.latenighthack.ktcrypto:ktcrypto-library", version.ref = "ktcrypto" }
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 

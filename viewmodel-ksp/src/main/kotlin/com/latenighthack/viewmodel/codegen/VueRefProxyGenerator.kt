@@ -331,6 +331,8 @@ class VueRefProxyGenerator(
             ).apply {
                 writeln(
                     """
+                    |@file:Suppress("NON_EXPORTABLE_TYPE")
+                    |
                     |package com.latenighthack.viewmodel.vue
                     |
                     |import com.latenighthack.viewmodel.common.fromHexString
