@@ -1,6 +1,6 @@
 package com.latenighthack.viewmodel.core
 
-interface Navigator {
+public interface Navigator {
     fun close()
 
     fun navigateTo(home: IHomeViewModel.Args)

@@ -1,5 +1,7 @@
 package com.latenighthack.viewmodel.core
 
+import com.latenighthack.api.v1.DummyService
+import com.latenighthack.api.v1.GetDummyRequest
 import com.latenighthack.ktcrypto.ECDH
 import com.latenighthack.ktcrypto.PublicKey
 import com.latenighthack.ktcrypto.RNG
@@ -21,6 +23,7 @@ import com.latenighthack.viewmodel.core.store.SimpleStore
 import com.latenighthack.viewmodel.list.Delta
 import com.latenighthack.viewmodel.list.flowListOf
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.onStart
 
 interface IHomeListItemViewModel {
 }
@@ -55,10 +58,15 @@ class HomeListItemBViewModel(title: String) : IHomeListItemBViewModel, StatefulV
 
 class HomeViewModel(
     override val args: IHomeViewModel.Args,
-    val basicStore: SimpleStore
+    val basicStore: SimpleStore,
+    val service: DummyService
 ) : IHomeViewModel, StatefulViewModel<IHomeViewModel.State>(IHomeViewModel.State("Hello world!")) {
 
     override suspend fun onStartTapped() {
+//        val response = service.getDummy(GetDummyRequest {
+//            value = 123
+//        })
+
         update {
             val id = RNG.randomBytes(8)
 
@@ -73,7 +81,7 @@ class HomeViewModel(
         }
     }
 
-    override val items: Flow<Delta<IHomeListItemViewModel>> = flowListOf {
+    override val items: Flow<Delta<IHomeListItemViewModel>> = flowListOf<IHomeListItemViewModel> {
         val key = Secp256r1KeyPair.generate()
 
         basicStore.getAllProperties().map {

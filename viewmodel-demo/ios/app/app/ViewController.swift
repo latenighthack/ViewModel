@@ -45,9 +45,15 @@ class CoreNavigableViewController<
     }
 }
 
-class HomeViewController: CoreNavigableViewController<HomeViewModel, IHomeViewModelState, IHomeViewModelArgs> {
+class HomeViewController: CoreNavigableViewController<IHomeViewModel, IHomeViewModelState, IHomeViewModelArgs> {
 
-    override func createViewModel() -> HomeViewModel {
-        return HomeViewModel(args: self.args)
+    override func createViewModel() -> IHomeViewModel {
+        let core = Core(serverPath: "latenighthack.com")
+        
+        return HomeReporterProxy(original: HomeViewModel(
+            args: self.args,
+            basicStore: core.simpleStore,
+            service: core.dummyService
+        ), reporter: AmplitudeViewModelReporter())
     }
 }

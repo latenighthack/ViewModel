@@ -1,5 +1,4 @@
 import UIKit
-import ViewModelSupportCoreObjC
 
 public protocol ArgViewController {
     associatedtype ArgType
@@ -7,12 +6,6 @@ public protocol ArgViewController {
     var args: ArgType { get }
 
     init(args: ArgType)
-}
-
-public protocol NativeNavigableViewModel: NativeViewModel {
-}
-
-public protocol VM {
 }
 
 public typealias VMCloseable = () -> Void

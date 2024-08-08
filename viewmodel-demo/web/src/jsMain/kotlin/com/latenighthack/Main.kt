@@ -16,7 +16,7 @@ fun main(
     router: dynamic,
     callback: dynamic
 ) {
-    val core = Core(createStoreDelegate("main_db"))
+    val core = Core(createStoreDelegate("main_db"), "latenighthack.com")
     val vueModels = ViewModelVueCreator(
         ViewModelCreator(),
         object : ViewModelReporter {

@@ -14,7 +14,7 @@
 		A99CFCC62C5CC55A00527CB8 /* Core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99CFCC52C5CC55A00527CB8 /* Core.framework */; };
 		A99CFCC72C5CC55A00527CB8 /* Core.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99CFCC52C5CC55A00527CB8 /* Core.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A99CFCE62C5D8A9900527CB8 /* ViewModelSupport in Frameworks */ = {isa = PBXBuildFile; productRef = A99CFCE52C5D8A9900527CB8 /* ViewModelSupport */; };
-		A99CFCE82C5D8A9900527CB8 /* ViewModelSupportCoreObjC in Frameworks */ = {isa = PBXBuildFile; productRef = A99CFCE72C5D8A9900527CB8 /* ViewModelSupportCoreObjC */; };
+		A99CFCEA2C6492C900527CB8 /* AmplitudeViewModelReporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99CFCE92C6492C900527CB8 /* AmplitudeViewModelReporter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -39,6 +39,7 @@
 		A99CFCBC2C5CC3C900527CB8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A99CFCBE2C5CC3C900527CB8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A99CFCC52C5CC55A00527CB8 /* Core.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Core.framework; path = ../../core/build/bin/iosSimulatorArm64/debugFramework/Core.framework; sourceTree = "<group>"; };
+		A99CFCE92C6492C900527CB8 /* AmplitudeViewModelReporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmplitudeViewModelReporter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,7 +49,6 @@
 			files = (
 				A99CFCC62C5CC55A00527CB8 /* Core.framework in Frameworks */,
 				A99CFCE62C5D8A9900527CB8 /* ViewModelSupport in Frameworks */,
-				A99CFCE82C5D8A9900527CB8 /* ViewModelSupportCoreObjC in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -80,6 +80,7 @@
 				A99CFCB92C5CC3C900527CB8 /* Assets.xcassets */,
 				A99CFCBB2C5CC3C900527CB8 /* LaunchScreen.storyboard */,
 				A99CFCBE2C5CC3C900527CB8 /* Info.plist */,
+				A99CFCE92C6492C900527CB8 /* AmplitudeViewModelReporter.swift */,
 			);
 			path = app;
 			sourceTree = "<group>";
@@ -111,7 +112,6 @@
 			name = app;
 			packageProductDependencies = (
 				A99CFCE52C5D8A9900527CB8 /* ViewModelSupport */,
-				A99CFCE72C5D8A9900527CB8 /* ViewModelSupportCoreObjC */,
 			);
 			productName = app;
 			productReference = A99CFCAD2C5CC3C800527CB8 /* app.app */;
@@ -171,6 +171,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A99CFCB52C5CC3C900527CB8 /* ViewController.swift in Sources */,
+				A99CFCEA2C6492C900527CB8 /* AmplitudeViewModelReporter.swift in Sources */,
 				A99CFCB12C5CC3C800527CB8 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -402,10 +403,6 @@
 		A99CFCE52C5D8A9900527CB8 /* ViewModelSupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ViewModelSupport;
-		};
-		A99CFCE72C5D8A9900527CB8 /* ViewModelSupportCoreObjC */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = ViewModelSupportCoreObjC;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

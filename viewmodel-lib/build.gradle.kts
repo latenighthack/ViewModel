@@ -83,6 +83,8 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation(libs.kotlinx.coroutines.android)
+                implementation(libs.androidx.recyclerview)
+                implementation(libs.androidx.viewpager)
             }
         }
 

@@ -16,8 +16,11 @@ kotlin {
 
     sourceSets {
         androidMain.dependencies {
+            implementation(libs.kotlin.reflect)
             implementation(libs.ktstore.library)
             implementation(libs.viewmodel.library)
+            implementation(libs.androidx.recyclerview)
+            implementation(libs.coroutines.android)
         }
         commonMain.dependencies {
             implementation(libs.ktstore.library)
@@ -30,13 +33,9 @@ android {
     namespace = "com.latenighthack"
     compileSdk = 34
 
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-    sourceSets["main"].res.srcDirs("src/androidMain/res")
-    sourceSets["main"].resources.srcDirs("src/commonMain/resources")
-
     defaultConfig {
-        applicationId = "com.jetbrains.kmpapp"
-        minSdk = 24
+        applicationId = "com.latenighthack"
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -45,6 +44,9 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+    }
+    packagingOptions {
+        merge("META-INF/versions/9/OSGI-INF/MANIFEST.MF")
     }
     buildTypes {
         getByName("release") {

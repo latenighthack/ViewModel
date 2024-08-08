@@ -1,3 +1,5 @@
+import com.google.protobuf.gradle.GenerateProtoTask
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
@@ -60,14 +62,9 @@ kotlin {
                 implementation(libs.viewmodel.library)
                 implementation(libs.ktstore.library)
                 implementation(libs.ktcrypto.library)
-                implementation(libs.ktbuf)
+                implementation(libs.ktbuf.library)
+                implementation(libs.ktbuf.rpc)
                 implementation(libs.coroutines.core)
-            }
-            kotlin {
-                srcDirs(
-                    "build/generated/source/proto/debug/kotlin",
-                    "build/generated/source/proto/release/kotlin",
-                )
             }
         }
         val androidMain by getting {
@@ -75,32 +72,36 @@ kotlin {
                 implementation(libs.viewmodel.library)
                 implementation(libs.ktstore.library)
                 implementation(libs.ktcrypto.library)
-                implementation(libs.ktbuf)
+                implementation(libs.ktbuf.library)
+                implementation(libs.ktbuf.rpc)
                 implementation(libs.coroutines.android)
             }
         }
 
         val iosX64Main by getting {
             dependencies {
-                api(libs.viewmodel.library)
                 implementation(libs.ktstore.library)
                 implementation(libs.ktcrypto.library)
-                implementation(libs.ktbuf)
+                implementation(libs.ktbuf.library)
+                implementation(libs.ktbuf.rpc)
+                api(libs.viewmodel.library)
             }
         }
         val iosArm64Main by getting {
             dependencies {
-                api(libs.viewmodel.library)
                 implementation(libs.ktstore.library)
                 implementation(libs.ktcrypto.library)
-                implementation(libs.ktbuf)
+                implementation(libs.ktbuf.library)
+                implementation(libs.ktbuf.rpc)
+                api(libs.viewmodel.library)
             }
         }
         val iosSimulatorArm64Main by getting {
             dependencies {
                 implementation(libs.ktstore.library)
                 implementation(libs.ktcrypto.library)
-                implementation(libs.ktbuf)
+                implementation(libs.ktbuf.library)
+                implementation(libs.ktbuf.rpc)
                 api(libs.viewmodel.library)
             }
         }
@@ -110,7 +111,8 @@ kotlin {
                 implementation(libs.viewmodel.library)
                 implementation(libs.ktstore.library)
                 implementation(libs.ktcrypto.library)
-                implementation(libs.ktbuf)
+                implementation(libs.ktbuf.library)
+                implementation(libs.ktbuf.rpc)
                 implementation(libs.coroutines.core)
             }
         }
@@ -125,15 +127,25 @@ android {
     compileSdk = 34
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
-        minSdk = 21
+        minSdk = 26
         targetSdk = 34
     }
     namespace = "com.latenighthack.viewmodel.demo.core"
 }
 
-dependencies {
-    implementation(libs.viewmodel.library)
-    implementation(libs.ktstore.library)
-    implementation(libs.ktcrypto.library)
-    implementation(libs.ktbuf)
+tasks.withType<GenerateProtoTask>().configureEach {
+    outputs.upToDateWhen { false }
+
+    doLast {
+        val outputDir = outputBaseDir
+        println("Protobuf output directory: $outputDir")
+
+        kotlin.sourceSets.getByName("commonMain").kotlin.srcDir("$outputDir/kotlin")
+
+//        kotlin.sourceSets.forEach {
+//            it.kotlin.srcDir("$outputDir/kotlin")
+//        }
+//        val dirs = kotlin.sourceSets.getByName("commonMain").kotlin.srcDirs
+//        println(">>> $dirs")
+    }
 }

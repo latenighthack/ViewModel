@@ -7,20 +7,33 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:name=".MuseumApp"
+        android:name=".MainApplication"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
+
+        <!-- The Application constructor is too early. onCreate is too late. Fabric is a bastard -->
+        <provider
+            android:name=".PreloadContentProvider"
+            android:initOrder="65537"
+            android:multiprocess="false"
+            android:authorities="${applicationId}.dopreload"
+            android:exported="false">
+        </provider>
+
         <activity
             android:exported="true"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|mnc|colorMode|density|fontScale|fontWeightAdjustment|keyboard|layoutDirection|locale|mcc|navigation|smallestScreenSize|touchscreen|uiMode"
-            android:name=".MainActivity">
+            android:name=".RoutingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- App activities go here -->
+        <activity android:name=".activities.HomeActivity" android:exported="false" />
     </application>
 
 </manifest>

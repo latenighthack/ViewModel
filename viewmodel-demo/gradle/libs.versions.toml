@@ -3,21 +3,25 @@ agp = "8.2.2"
 kotlin = "2.0.0"
 coroutines = "1.8.1"
 ksp = "2.0.0-1.0.22"
-ktbuf = "1.0.0"
+ktbuf = "1.0.2"
 viewmodel = "0.0.4"
-ktstore = "0.0.1"
-ktcrypto = "0.0.1"
+ktstore = "0.0.2"
+ktcrypto = "0.0.2"
 viewmodelGradlePlugin = "0.0.4-2.0.0"
 protobuf = "0.9.4"
+androidxRecyclerview = "1.3.2"
 
 [libraries]
-ktbuf = { module = "com.latenighthack.ktbuf:ktbuf-library", version.ref = "ktbuf" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
+ktbuf-library = { module = "com.latenighthack.ktbuf:ktbuf-library", version.ref = "ktbuf" }
+ktbuf-rpc = { module = "com.latenighthack.ktbuf:ktbuf-rpc", version.ref = "ktbuf" }
 viewmodel-annotations = { module = "com.latenighthack.viewmodel:viewmodel-annotations", version.ref = "viewmodel" }
 viewmodel-library = { module = "com.latenighthack.viewmodel:viewmodel-lib", version.ref = "viewmodel" }
 ktstore-library = { module = "com.latenighthack.ktstore:ktstore-library", version.ref = "ktstore" }
 ktcrypto-library = { module = "com.latenighthack.ktcrypto:ktcrypto-library", version.ref = "ktcrypto" }
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "androidxRecyclerview" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

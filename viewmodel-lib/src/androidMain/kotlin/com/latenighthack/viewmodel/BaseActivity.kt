@@ -23,6 +23,8 @@ public abstract class BaseActivity<ViewModelType : NavigableViewModel<StateType,
     protected val bindingScope: CoroutineScope = MainScope() + job
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        (application as? ActivitiesProvider)?.addActivity(this)
+
         viewModel = createViewModel()
 
         rootLayout = doCreateView(this, viewModel)
@@ -70,6 +72,8 @@ public abstract class BaseActivity<ViewModelType : NavigableViewModel<StateType,
 
     override fun onDestroy() {
         super.onDestroy()
+
+        (application as? ActivitiesProvider)?.removeActivity(this)
 
         job.complete()
     }
