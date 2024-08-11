@@ -3,6 +3,7 @@ import com.google.protobuf.gradle.GenerateProtoTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
+import com.google.devtools.ksp.gradle.KspTaskMetadata
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -145,3 +146,6 @@ android {
     namespace = "com.latenighthack.viewmodel.demo.core"
 }
 
+tasks.withType<KspTaskMetadata> {
+    dependsOn("generateDebugProto")
+}
