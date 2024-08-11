@@ -15,6 +15,8 @@
 		A99CFCC72C5CC55A00527CB8 /* Core.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99CFCC52C5CC55A00527CB8 /* Core.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A99CFCE62C5D8A9900527CB8 /* ViewModelSupport in Frameworks */ = {isa = PBXBuildFile; productRef = A99CFCE52C5D8A9900527CB8 /* ViewModelSupport */; };
 		A99CFCEA2C6492C900527CB8 /* AmplitudeViewModelReporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99CFCE92C6492C900527CB8 /* AmplitudeViewModelReporter.swift */; };
+		A99CFCEC2C66922E00527CB8 /* UICollectionView+Flow.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99CFCEB2C66922E00527CB8 /* UICollectionView+Flow.swift */; };
+		A99CFCEE2C66C42000527CB8 /* CoreNavigableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99CFCED2C66C42000527CB8 /* CoreNavigableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -40,6 +42,8 @@
 		A99CFCBE2C5CC3C900527CB8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A99CFCC52C5CC55A00527CB8 /* Core.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Core.framework; path = ../../core/build/bin/iosSimulatorArm64/debugFramework/Core.framework; sourceTree = "<group>"; };
 		A99CFCE92C6492C900527CB8 /* AmplitudeViewModelReporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmplitudeViewModelReporter.swift; sourceTree = "<group>"; };
+		A99CFCEB2C66922E00527CB8 /* UICollectionView+Flow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Flow.swift"; sourceTree = "<group>"; };
+		A99CFCED2C66C42000527CB8 /* CoreNavigableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreNavigableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +85,8 @@
 				A99CFCBB2C5CC3C900527CB8 /* LaunchScreen.storyboard */,
 				A99CFCBE2C5CC3C900527CB8 /* Info.plist */,
 				A99CFCE92C6492C900527CB8 /* AmplitudeViewModelReporter.swift */,
+				A99CFCEB2C66922E00527CB8 /* UICollectionView+Flow.swift */,
+				A99CFCED2C66C42000527CB8 /* CoreNavigableViewController.swift */,
 			);
 			path = app;
 			sourceTree = "<group>";
@@ -171,7 +177,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				A99CFCB52C5CC3C900527CB8 /* ViewController.swift in Sources */,
+				A99CFCEE2C66C42000527CB8 /* CoreNavigableViewController.swift in Sources */,
 				A99CFCEA2C6492C900527CB8 /* AmplitudeViewModelReporter.swift in Sources */,
+				A99CFCEC2C66922E00527CB8 /* UICollectionView+Flow.swift in Sources */,
 				A99CFCB12C5CC3C800527CB8 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

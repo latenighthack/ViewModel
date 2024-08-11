@@ -14,27 +14,14 @@ open class BaseViewController<ViewModelType, StateType>: UIViewController {
 
     private var watchCloseable: VMCloseable?
     public lazy var viewModel: ViewModelType! = self.createViewModel()
-//    var bindingScope: BindingScope
-//
-    init() {
-//        self.bindingScope = BindingScope()
 
+    init() {
         super.init(nibName: nil, bundle: nil)
     }
-//
-//    init(bindingScope: BindingScope) {
-//        self.bindingScope = bindingScope
-//
-//        super.init(nibName: nil, bundle: nil)
-//    }
-
+    
     required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-//    deinit {
-//        self.bindingScope.cancel()
-//    }
 
     open func createViewModel() -> ViewModelType {
         preconditionFailure("This method must be implemented")
@@ -59,9 +46,14 @@ open class BaseViewController<ViewModelType, StateType>: UIViewController {
     open func attachViewModelTo(observer: @escaping (StateType) -> Void) -> VMCloseable {
         fatalError("unimplemented")
     }
+    
+    open func setup() {
+    }
 
     open override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.setup()
 
         self.onBindView(viewModel: self.viewModel)
 

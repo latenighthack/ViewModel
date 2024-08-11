@@ -82,13 +82,15 @@ class HomeViewModel(
     }
 
     override val items: Flow<Delta<IHomeListItemViewModel>> = flowListOf<IHomeListItemViewModel> {
-        val key = Secp256r1KeyPair.generate()
+//        val key = Secp256r1KeyPair.generate()
 
         basicStore.getAllProperties().map {
             HomeListItemAViewModel(it.description)
         } + listOf(
-            HomeListItemBViewModel("Pub Key ${key.publicKey.encode().toBase64String()}"),
-            HomeListItemBViewModel("Priv Key ${key.privateKey.encode().toBase64String()}")
+            HomeListItemBViewModel("Test ${RNG.randomBytes(8).toBase64String()}"),
+            HomeListItemBViewModel("Test ${RNG.randomBytes(8).toBase64String()}"),
+//            HomeListItemBViewModel("Pub Key ${key.publicKey.encode().toBase64String()}"),
+//            HomeListItemBViewModel("Priv Key ${key.privateKey.encode().toBase64String()}")
         )
     }
 }

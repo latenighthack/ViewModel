@@ -9,51 +9,117 @@ import UIKit
 import ViewModelSupport
 import Core
 
-class SwiftCollector<T>: Kotlinx_coroutines_coreFlowCollector {
-    typealias Callback = (T) -> Void
+class HomeCollectionViewCell: CloseableCollectionViewCell {
+}
+
+class HomeACollectionViewCell: HomeCollectionViewCell, ViewModelBoundCell {
+    static let reusableCellIdentifier = "HomeCollectionViewCellA"
     
-    private var callback: Callback
+    private var titleLabel: UILabel!
     
-    init(_ callback: @escaping Callback) {
-        self.callback = callback
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        self.titleLabel = UILabel()
+            .disableAutoresizingConstraints()
+            .textColor(.blue)
+            .addTo(self.contentView)
+            .constrainLeading(toLeadingOf: self.contentView, offsetBy: 10.0)
+            .constrainCenterY(to: self.contentView)
     }
     
-    func emit(value: Any?) async throws {
-        guard let typedValue = value as? T else {
-            return
-        }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func viewModelDidChange(_ viewModel: any Viewmodel_libViewModel) {
+        let viewModel = viewModel as! any IHomeListItemAViewModel
+    }
+    
+    func viewModelStateDidChange(_ state: Any) {
+        let state = state as! IHomeListItemAViewModelState
         
-        self.callback(typedValue)
+        self.titleLabel.text = state.titleA
     }
 }
 
-class CoreNavigableViewController<
-    ViewModelType: Viewmodel_libNavigableViewModel,
-    StateType,
-    NavArgType: Viewmodel_libNavigatorArgs
->: BaseNavigableViewController<ViewModelType, StateType, NavArgType> {
+class HomeBCollectionViewCell: HomeCollectionViewCell, ViewModelBoundCell {
+    static let reusableCellIdentifier = "HomeCollectionViewCellB"
     
-    override final func attachViewModelTo(observer: @escaping (StateType) -> Void) -> VMCloseable {
-        self.viewModel.state.collect(collector: SwiftCollector({ [observer] (value: StateType) in
-            observer(value)
-        }), completionHandler: { _ in
-        })
+    private var titleLabel: UILabel!
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         
-        return {
-//            closeable.close()
-        }
+        self.titleLabel = UILabel()
+            .disableAutoresizingConstraints()
+            .textColor(.red)
+            .addTo(self.contentView)
+            .constrainLeading(toLeadingOf: self.contentView, offsetBy: 10.0)
+            .constrainCenterY(to: self.contentView)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func viewModelDidChange(_ viewModel: any Viewmodel_libViewModel) {
+        let viewModel = viewModel as! any IHomeListItemBViewModel
+    }
+    
+    func viewModelStateDidChange(_ state: Any) {
+        let state = state as! IHomeListItemBViewModelState
+        
+        self.titleLabel.text = state.titleB
     }
 }
 
 class HomeViewController: CoreNavigableViewController<IHomeViewModel, IHomeViewModelState, IHomeViewModelArgs> {
+    
+    private var itemView: UICollectionView!
+    private var startButton: UIButton!
 
     override func createViewModel() -> IHomeViewModel {
-        let core = Core(serverPath: "latenighthack.com")
-        
         return HomeReporterProxy(original: HomeViewModel(
             args: self.args,
-            basicStore: core.simpleStore,
-            service: core.dummyService
+            basicStore: self.core.simpleStore,
+            service: self.core.dummyService
         ), reporter: AmplitudeViewModelReporter())
+    }
+    
+    override func setup() {
+        let configuration = UICollectionLayoutListConfiguration(appearance: .plain)
+        let layout = UICollectionViewCompositionalLayout.list(using: configuration)
+        
+        self.startButton = UIButton(frame: .zero)
+            .disableAutoresizingConstraints()
+            .setTitle("Start")
+            .addTo(self.view)
+            .constrainTop(toTopOf: self.view, useSafeArea: true)
+        
+        self.itemView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+            .disableAutoresizingConstraints()
+            .addTo(self.view)
+            .constrainTop(toBottomOf: self.startButton)
+            .constrainLeading(toLeadingOf: self.view)
+            .constrainTrailing(toTrailingOf: self.view)
+            .constrainBottom(toBottomOf: self.view, useSafeArea: true)
+    }
+    
+    override func onBindView(viewModel: any IHomeViewModel) {
+        self.startButton.onClickAsync(viewModel.onStartTapped(completionHandler:))
+        
+        self.itemView.sections(inScope: self.bindingScope) {
+            Section(flow: self.viewModel.items) {
+                Layout<IHomeListItemAViewModel>(
+                    cellType: HomeACollectionViewCell.self,
+                    reuseIdentifier: HomeACollectionViewCell.reusableCellIdentifier
+                )
+                Layout<IHomeListItemBViewModel>(
+                    cellType: HomeBCollectionViewCell.self,
+                    reuseIdentifier: HomeBCollectionViewCell.reusableCellIdentifier
+                )
+            }
+        }
     }
 }

@@ -1,4 +1,8 @@
+import com.google.devtools.ksp.gradle.KspTask
 import com.google.protobuf.gradle.GenerateProtoTask
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -14,15 +18,23 @@ protobuf {
     }
 
     generateProtoTasks {
-        all().forEach {
-            it.builtins {
+        all().forEach { task ->
+            task.builtins {
 //                remove("java")
             }
 
-            it.plugins {
+            task.plugins {
                 create("kt") {
                     outputSubDir = "kotlin"
                 }
+            }
+
+            task.outputs.upToDateWhen { false }
+
+            val outputDir = task.outputBaseDir
+
+            if (outputDir.indexOf("/proto/debug") > 0) {
+                kotlin.sourceSets.getByName("commonMain").kotlin.srcDirs("$outputDir/kotlin")
             }
         }
     }
@@ -133,19 +145,3 @@ android {
     namespace = "com.latenighthack.viewmodel.demo.core"
 }
 
-tasks.withType<GenerateProtoTask>().configureEach {
-    outputs.upToDateWhen { false }
-
-    doLast {
-        val outputDir = outputBaseDir
-        println("Protobuf output directory: $outputDir")
-
-        kotlin.sourceSets.getByName("commonMain").kotlin.srcDir("$outputDir/kotlin")
-
-//        kotlin.sourceSets.forEach {
-//            it.kotlin.srcDir("$outputDir/kotlin")
-//        }
-//        val dirs = kotlin.sourceSets.getByName("commonMain").kotlin.srcDirs
-//        println(">>> $dirs")
-    }
-}

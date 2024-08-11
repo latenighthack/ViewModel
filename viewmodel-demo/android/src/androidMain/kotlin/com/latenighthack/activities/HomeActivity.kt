@@ -21,6 +21,19 @@ class HomeActivity: CoreBaseActivity<IHomeViewModel, IHomeViewModel.State, IHome
         startButton = Button(text = "Click Me", layout = LayoutType.DEFAULT)
 
         VerticalRecyclerView(layout = LayoutType.FILL_VERTICALLY) {
+            sections(bindingScope) {
+                section(viewModel.items) {
+                    layout<TextView, IHomeListItemAViewModel, IHomeListItemAViewModel.State> {
+                        onBindView {
+                            setTextColor(0xffff0000.toInt())
+                        }
+
+                        onStateChanged { _, state ->
+                            text = state.titleA
+                        }
+                    }
+                }
+            }
             items(bindingScope, viewModel.items) {
                 layout<TextView, IHomeListItemAViewModel, IHomeListItemAViewModel.State> {
                     onBindView {

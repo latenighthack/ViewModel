@@ -7,10 +7,12 @@
 
 import UIKit
 
-fileprivate class ViewControllerTarget<ViewControllerType: UIViewController> {
+public class ViewControllerTarget<ViewControllerType: UIViewController> {
+    public init() {
+    }
 }
 
-public class IosNavigator<NavigationControllerType: UINavigationController> {
+open class IosNavigator<NavigationControllerType: UINavigationController> {
     private weak var viewController: UIViewController?
 
     private var navigationController: UINavigationController? {
@@ -39,11 +41,11 @@ public class IosNavigator<NavigationControllerType: UINavigationController> {
         }
     }
 
-    init(viewController: UIViewController) {
+    public init(viewController: UIViewController) {
         self.viewController = viewController
     }
 
-    func close() {
+    @objc public func close() {
         runOnMain {
             if (self.viewController?.presentingViewController != nil) {
                 self.viewController?.dismiss(animated: true)
@@ -53,7 +55,7 @@ public class IosNavigator<NavigationControllerType: UINavigationController> {
         }
     }
 
-    private func pushViewController<
+    public func pushViewController<
         ViewControllerTargetType: ViewControllerTarget<ViewControllerType>,
         ViewControllerType: ArgViewController
     >(target: ViewControllerTargetType, args: ViewControllerType.ArgType, intoRoot: Bool = false) {
@@ -86,7 +88,7 @@ public class IosNavigator<NavigationControllerType: UINavigationController> {
         }
     }
 
-    private func pushViewController<
+    public func pushViewController<
         ViewControllerRefType: ViewControllerTarget<OverViewControllerType>,
         OverViewControllerType: UIViewController,
         ViewControllerTargetType: ViewControllerTarget<ViewControllerType>,
@@ -173,43 +175,48 @@ public class IosNavigator<NavigationControllerType: UINavigationController> {
         }
     }
 
-    private func pushRootViewController<
+    public func pushRootViewController<
         ViewControllerTargetType: ViewControllerTarget<ViewControllerType>,
         ViewControllerType: ArgViewController
     >(target: ViewControllerTargetType, args: ViewControllerType.ArgType) {
-        runOnMain { [args/*, resolver*/] in
+        runOnMain { [weak self, args/*, resolver*/] in
+            guard let self = self else { return }
+            
             let targetViewController = ViewControllerType.init(args: args)//, resolver: resolver)
-            let bottomVc = self.navigationController?.viewControllers[0]
+            
+            if !self.navigationController!.viewControllers.isEmpty {
+                let bottomVc = self.navigationController?.viewControllers[0]
 
-            var navigationController = self.navigationController
-            while navigationController?.presentingViewController != nil {
-                let presenting = navigationController?.presentingViewController
-                let oldNavigationController = navigationController
+                var navigationController = self.navigationController
+                while navigationController?.presentingViewController != nil {
+                    let presenting = navigationController?.presentingViewController
+                    let oldNavigationController = navigationController
 
-                if presenting is UINavigationController {
-                    navigationController = presenting as? UINavigationController
-                } else if presenting?.navigationController != nil {
-                    navigationController = presenting?.navigationController
-                }
+                    if presenting is UINavigationController {
+                        navigationController = presenting as? UINavigationController
+                    } else if presenting?.navigationController != nil {
+                        navigationController = presenting?.navigationController
+                    }
 
-                if oldNavigationController == navigationController {
-                    break
+                    if oldNavigationController == navigationController {
+                        break
+                    }
                 }
             }
 
-            if !navigationController!.viewControllers.isEmpty {
-                navigationController?.viewControllers[0].dismiss(animated: true) {
-                    navigationController?.pushViewController(targetViewController, animated: true)
-                    navigationController?.viewControllers = [targetViewController]
+            if !self.navigationController!.viewControllers.isEmpty {
+                self.navigationController?.viewControllers[0].dismiss(animated: true) {
+                    self.navigationController?.pushViewController(targetViewController, animated: true)
+                    self.navigationController?.viewControllers = [targetViewController]
                 }
             } else {
-                navigationController?.pushViewController(targetViewController, animated: true)
-                navigationController?.viewControllers = [targetViewController]
+                self.navigationController?.pushViewController(targetViewController, animated: true)
+                self.navigationController?.viewControllers = [targetViewController]
             }
         }
     }
 
-    private func pushModalViewController<
+    public func pushModalViewController<
         ViewControllerTargetType: ViewControllerTarget<ViewControllerType>,
         ViewControllerType: ArgViewController
     >(target: ViewControllerTargetType, args: ViewControllerType.ArgType) {
@@ -223,7 +230,7 @@ public class IosNavigator<NavigationControllerType: UINavigationController> {
         }
     }
 
-    private func popupViewController(_ targetViewController: UIViewController) {
+    public func popupViewController(_ targetViewController: UIViewController) {
         let rootNav = NavigationControllerType(rootViewController: targetViewController)
 
         self.navigationController?.topViewController?.present(rootNav, animated: true)
