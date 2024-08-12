@@ -162,6 +162,12 @@ class ViewModelProcessor(
                     vueProxyGenerator.generate(viewModels)
                     vueScreenComponentGenerator.generate(viewModels)
                 }
+                if (projectType.startsWith("ios")) {
+                    info.writeln("Writing iOS ViewControllers")
+                    val iosVcGenerator = SwiftViewControllerGenerator(dependencies, codeGenerator, log, options)
+
+                    iosVcGenerator.generate(viewModels)
+                }
 
                 if (projectName.startsWith("android")) {
                     info.writeln("Writing Android activities")
