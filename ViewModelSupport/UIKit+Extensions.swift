@@ -666,7 +666,7 @@ public extension UIView {
     }
 
     @discardableResult
-    func constrainEdges(to view: UIView, insetBy insets: UIEdgeInsets = .zero, useSafeArea: Bool = false) -> Self {
+    func constrainEdges(toEdgesOf view: UIView, insetBy insets: UIEdgeInsets = .zero, useSafeArea: Bool = false) -> Self {
         let topAnchor = useSafeArea ? view.safeAreaLayoutGuide.topAnchor : view.topAnchor
         let bottomAnchor = useSafeArea ? view.safeAreaLayoutGuide.bottomAnchor : view.bottomAnchor
         let leadingAnchor = useSafeArea ? view.safeAreaLayoutGuide.leadingAnchor : view.leadingAnchor
@@ -695,6 +695,88 @@ public extension UIView {
         let centerYAnchor = useSafeArea ? view.safeAreaLayoutGuide.centerYAnchor : view.centerYAnchor
         NSLayoutConstraint.activate([
             self.centerYAnchor.constraint(equalTo: centerYAnchor, constant: offset)
+        ])
+        return self
+    }
+
+    @discardableResult
+    static func constrainVerticalStack(
+        ofViews views: [UIView],
+        separatedBy separation: CGFloat = 0.0
+    ) -> [NSLayoutConstraint] {
+        var constraints = [NSLayoutConstraint]()
+        var previousView: UIView? = nil
+        
+        for view in views {
+            if let previousView = previousView {
+                constraints.append(view.topAnchor.constraint(equalTo: previousView.bottomAnchor, constant: separation))
+            }
+            
+            previousView = view
+        }
+        
+        NSLayoutConstraint.activate(constraints)
+        
+        return constraints
+    }
+
+    @discardableResult
+    static func constrainHorizontalStack(
+        ofViews views: [UIView],
+        separatedBy separation: CGFloat = 0.0
+    ) -> [NSLayoutConstraint] {
+        var constraints = [NSLayoutConstraint]()
+        var previousView: UIView? = nil
+        
+        for view in views {
+            if let previousView = previousView {
+                constraints.append(view.leadingAnchor.constraint(equalTo: previousView.trailingAnchor, constant: separation))
+            }
+            
+            previousView = view
+        }
+        
+        NSLayoutConstraint.activate(constraints)
+        
+        return constraints
+    }
+
+    @discardableResult
+    func constrainHorizontal(toHorizontalOf view: UIView, insetLeadingBy insetLeading: CGFloat = 0.0, insetTrailingBy insetTrailing: CGFloat = 0.0, useSafeArea: Bool = false) -> Self {
+        let leadingAnchor = useSafeArea ? view.safeAreaLayoutGuide.leadingAnchor : view.leadingAnchor
+        let trailingAnchor = useSafeArea ? view.safeAreaLayoutGuide.trailingAnchor : view.trailingAnchor
+        NSLayoutConstraint.activate([
+            self.leadingAnchor.constraint(equalTo: leadingAnchor, constant: insetLeading),
+            self.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -insetTrailing)
+        ])
+        return self
+    }
+
+    @discardableResult
+    func constrainVertical(toVerticalOf view: UIView, insetTopBy insetTop: CGFloat = 0.0, insetBottomBy insetBottom: CGFloat = 0.0, useSafeArea: Bool = false) -> Self {
+        let topAnchor = useSafeArea ? view.safeAreaLayoutGuide.topAnchor : view.topAnchor
+        let bottomAnchor = useSafeArea ? view.safeAreaLayoutGuide.bottomAnchor : view.bottomAnchor
+        NSLayoutConstraint.activate([
+            self.topAnchor.constraint(equalTo: topAnchor, constant: insetTop),
+            self.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -insetBottom)
+        ])
+        return self
+    }
+
+    @discardableResult
+    func constrainWidth(toWidthOf view: UIView, insetBy inset: CGFloat = 0.0, useSafeArea: Bool = false) -> Self {
+        let widthAnchor = useSafeArea ? view.safeAreaLayoutGuide.widthAnchor : view.widthAnchor
+        NSLayoutConstraint.activate([
+            self.widthAnchor.constraint(equalTo: widthAnchor, constant: -inset * 2.0)
+        ])
+        return self
+    }
+
+    @discardableResult
+    func constrainHeight(toHeightOf view: UIView, insetBy inset: CGFloat = 0.0, useSafeArea: Bool = false) -> Self {
+        let heightAnchor = useSafeArea ? view.safeAreaLayoutGuide.heightAnchor : view.heightAnchor
+        NSLayoutConstraint.activate([
+            self.heightAnchor.constraint(equalTo: heightAnchor, constant: -inset * 2.0)
         ])
         return self
     }
@@ -745,22 +827,6 @@ public extension UIView {
         return self
     }
 
-    @discardableResult
-    func constrainToEdges(of view: UIView, insetBy: UIEdgeInsets, useSafeArea: Bool = false) -> Self {
-        let topAnchor = useSafeArea ? view.safeAreaLayoutGuide.topAnchor : view.topAnchor
-        let bottomAnchor = useSafeArea ? view.safeAreaLayoutGuide.bottomAnchor : view.bottomAnchor
-        let leadingAnchor = useSafeArea ? view.safeAreaLayoutGuide.leadingAnchor : view.leadingAnchor
-        let trailingAnchor = useSafeArea ? view.safeAreaLayoutGuide.trailingAnchor : view.trailingAnchor
-
-        NSLayoutConstraint.activate([
-            self.topAnchor.constraint(equalTo: topAnchor, constant: insetBy.top),
-            self.bottomAnchor.constraint(equalTo: bottomAnchor, constant: insetBy.bottom),
-            self.leadingAnchor.constraint(equalTo: leadingAnchor, constant: insetBy.left),
-            self.trailingAnchor.constraint(equalTo: trailingAnchor, constant: insetBy.right)
-        ])
-
-        return self
-    }
     @discardableResult
     func setBackgroundColor(_ color: UIColor) -> Self {
         self.backgroundColor = color
