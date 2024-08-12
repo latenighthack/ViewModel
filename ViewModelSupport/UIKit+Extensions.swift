@@ -702,42 +702,68 @@ public extension UIView {
     @discardableResult
     static func constrainVerticalStack(
         ofViews views: [UIView],
-        separatedBy separation: CGFloat = 0.0
+        separatedBy separation: CGFloat = 0.0,
+        startAt: NSLayoutAnchor<NSLayoutYAxisAnchor>? = nil,
+        endAt: NSLayoutAnchor<NSLayoutYAxisAnchor>? = nil
     ) -> [NSLayoutConstraint] {
         var constraints = [NSLayoutConstraint]()
+        var previousConstraint: NSLayoutAnchor<NSLayoutYAxisAnchor>? = startAt
         var previousView: UIView? = nil
-        
+        var nextSeparation = 0.0
+
         for view in views {
-            if let previousView = previousView {
-                constraints.append(view.topAnchor.constraint(equalTo: previousView.bottomAnchor, constant: separation))
+            if let previousConstraint = previousConstraint {
+                constraints.append(view.topAnchor.constraint(
+                    equalTo: previousConstraint,
+                    constant: nextSeparation
+                ))
             }
-            
+
+            nextSeparation = separation
             previousView = view
+            previousConstraint = view.bottomAnchor
         }
-        
+
+        if let endConstraint = endAt, let previousView = previousView {
+            constraints.append(previousView.bottomAnchor.constraint(equalTo: endConstraint))
+        }
+
         NSLayoutConstraint.activate(constraints)
-        
+
         return constraints
     }
 
     @discardableResult
     static func constrainHorizontalStack(
         ofViews views: [UIView],
-        separatedBy separation: CGFloat = 0.0
+        separatedBy separation: CGFloat = 0.0,
+        startAt: NSLayoutAnchor<NSLayoutXAxisAnchor>? = nil,
+        endAt: NSLayoutAnchor<NSLayoutXAxisAnchor>? = nil
     ) -> [NSLayoutConstraint] {
         var constraints = [NSLayoutConstraint]()
+        var previousConstraint: NSLayoutAnchor<NSLayoutXAxisAnchor>? = startAt
         var previousView: UIView? = nil
-        
+        var nextSeparation = 0.0
+
         for view in views {
-            if let previousView = previousView {
-                constraints.append(view.leadingAnchor.constraint(equalTo: previousView.trailingAnchor, constant: separation))
+            if let previousConstraint = previousConstraint {
+                constraints.append(view.leadingAnchor.constraint(
+                    equalTo: previousConstraint,
+                    constant: nextSeparation
+                ))
             }
-            
+
+            nextSeparation = separation
             previousView = view
+            previousConstraint = view.trailingAnchor
         }
-        
+
+        if let endConstraint = endAt, let previousView = previousView {
+            constraints.append(previousView.trailingAnchor.constraint(equalTo: endConstraint))
+        }
+
         NSLayoutConstraint.activate(constraints)
-        
+
         return constraints
     }
 
