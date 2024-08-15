@@ -13,9 +13,9 @@ public class ViewControllerTarget<ViewControllerType: UIViewController> {
 }
 
 open class IosNavigator<NavigationControllerType: UINavigationController> {
-    private weak var viewController: UIViewController?
+    public weak var viewController: UIViewController?
 
-    private var navigationController: UINavigationController? {
+    public var navigationController: UINavigationController? {
         get {
             guard let vc = self.viewController else {
                 return nil
