@@ -31,7 +31,6 @@ public protocol ThemedColors {
     var contrastAccentColor: UIColor { get }
     var lightAccentColor: UIColor { get }
     var shadowAccentColor: UIColor { get }
-    var accentButtonImage: UIImage { get }
 }
 
 fileprivate extension UIImage {
@@ -60,7 +59,6 @@ public struct LightThemedColors: ThemedColors {
     public var contrastAccentColor: UIColor = .fromRgb(0x8b64ff)
     public var lightAccentColor: UIColor = .fromRgb(0x8E5FFF)
     public var shadowAccentColor: UIColor = .fromRgb(0xA17BFF)
-    public var accentButtonImage: UIImage = UIImage.button(named: "btn-light-accent")
 }
 
 public struct DarkThemedColors: ThemedColors {
@@ -82,7 +80,6 @@ public struct DarkThemedColors: ThemedColors {
     public var contrastAccentColor: UIColor = .fromRgb(0x7A44FF)
     public var lightAccentColor: UIColor = .fromRgb(0x550BBB)
     public var shadowAccentColor: UIColor = .fromRgb(0x1b0947)
-    public var accentButtonImage: UIImage = UIImage.button(named: "btn-dark-accent")
 }
 
 var themedColors: ThemedColors = LightThemedColors()
@@ -915,16 +912,6 @@ public extension UIStatusBarStyle {
     static var appDefaultStyle: UIStatusBarStyle {
         get {
             return themedColors.statusBarDefaultTheme
-        }
-    }
-}
-
-
-public extension UIImage {
-    
-    class var accentButtonImage: UIImage {
-        get {
-            return themedColors.accentButtonImage
         }
     }
 }

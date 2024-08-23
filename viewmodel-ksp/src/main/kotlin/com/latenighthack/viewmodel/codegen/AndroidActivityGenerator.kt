@@ -17,9 +17,9 @@ class AndroidActivityGenerator(
         }
         val stateViewDeclare = nonEditStateProperties(vm).joinToString("\n") {
             when (it.type!!.simpleName) {
-                "String" -> "    lateinit var ${it.name}View: PrimaryTextView"
+                "String" -> "    lateinit var ${it.name}View: TextView"
                 "Boolean" -> if (it.name.endsWith("Checked")) {
-                    "    lateinit var ${it.name.getActionParts().noun.toCamelCase()}View: PrimaryTextView"
+                    "    lateinit var ${it.name.getActionParts().noun.toCamelCase()}View: TextView"
                 } else {
                     "    // todo: ${it.name}"
                 }
@@ -56,25 +56,25 @@ class AndroidActivityGenerator(
         key: String = "viewModel"
     ): String {
         val actionViewCreate = vm.actions.joinToString("\n") {
-            """        ${it.name!!.noun.toCamelCase()}View = Button(context).apply { setText("${it.name.noun.toUpperSpaced()}") }.onClick${if (it.isSuspend) "(bindingScope, " else "("}${key}::${it.methodName}).addTo(this)"""
+            """        ${it.name!!.noun.toCamelCase()}View = Button(text = "${it.name.noun.toUpperSpaced()}").onClick${if (it.isSuspend) "(bindingScope, " else "("}${key}::${it.methodName})"""
         }
 
         val stateViewCreate = nonEditStateProperties(vm).joinToString("\n") {
             when (it.type!!.simpleName) {
-                "String" -> """        ${it.name}View = PrimaryTextView("${it.name}")"""
+                "String" -> """        ${it.name}View = TextView(text = "${it.name}")"""
                 else -> "        // todo: ${it.name}"
             }
         }
         val mutatorViewCreate = vm.mutations.joinToString("\n") {
             when (it.parameterType!!.simpleName) {
                 "String" -> if (it.isSuspend) {
-                    """        ${it.name!!.noun.toCamelCase()}View = StandardEditText("${it.name.noun.toUpperSpaced()}")
-                    |        ${it.name.noun.toCamelCase()}View.editText.onChanged(bindingScope, ${key}::${it.methodName})
-                    """.trimMargin()
+                    """        ${it.name!!.noun.toCamelCase()}View = StandardEditText("${it.name.noun.toUpperSpaced()}") {
+                    |        editText.onChanged(bindingScope, ${key}::${it.methodName})
+                    |}""".trimMargin()
                 } else {
-                    """        ${it.name!!.noun.toCamelCase()}View = StandardEditText("${it.name.noun.toUpperSpaced()}")
-                    |        ${it.name.noun.toCamelCase()}View.editText.onChanged(${key}::${it.methodName})
-                    """.trimMargin()
+                    """        ${it.name!!.noun.toCamelCase()}View = StandardEditText("${it.name.noun.toUpperSpaced()}") {
+                    |        editText.onChanged(${key}::${it.methodName})
+                    |}""".trimMargin()
                 }
 
                 else -> "        // todo: ${it.name}"
@@ -141,7 +141,7 @@ class AndroidActivityGenerator(
                             } ?: ""
 
                             """
-                                |            layout<PrimaryTextView, ${it.declaration!!.qualifiedName}, ${it.state?.type!!.qualifiedName}> {
+                                |            layout<TextView, ${it.declaration!!.qualifiedName}, ${it.state?.type!!.qualifiedName}> {
                                 |                onBindView { vm ->
                                 |                    text = "${it.name.toUpperSpaced()}"
                                 |                    $onClick
@@ -208,7 +208,7 @@ class AndroidActivityGenerator(
 
         for (vm in viewModels) {
             // val reporterProxyClassName = "${vm.name.toUpperCamelCase()}ReporterProxy"
-            val activityClassName = "Abstract${vm.name.toUpperCamelCase()}Activity"
+            val activityClassName = "${vm.name.toUpperCamelCase()}Activity"
             val vmInterfaceName = vm.declaration!!.qualifiedName
 
             if (!vm.isNavigable) {
@@ -250,34 +250,44 @@ class AndroidActivityGenerator(
                 dependencies,
                 "com.latenighthack.viewmodel.gen.activities",
                 activityClassName,
-                "kt"
+                "ktx"
             ).apply {
                 writeln(
                     """
-                    |package com.latenighthack.viewmodel.gen.activities
-                    |
-                    |import com.latenighthack.viewmodel.common.*
-                    |import com.latenighthack.viewmodel.app.activities.tools.*
-                    |import com.latenighthack.viewmodel.common.*
-                    |import com.latenighthack.viewmodel.common.ViewModelReporter
-                    |import kotlinx.coroutines.flow.Flow
+                    |package gg.roll.activities
                     |
                     |import android.content.Context
-                    |import android.widget.*
                     |import android.view.View
-                    |import com.latenighthack.viewmodel.app.R
-                    |import com.latenighthack.viewmodel.app.view.*
-                    |import com.latenighthack.viewmodel.app.view.extensions.*
-                    |import com.latenighthack.viewmodel.app.activities.tools.BaseActivity
-                    |import com.latenighthack.viewmodel.app.activities.tools.navigator
-                    |import androidx.viewpager.widget.ViewPager
-                    |import com.latenighthack.viewmodel.app.view.items
-                    |import com.latenighthack.viewmodel.app.view.onChanged
-                    |import com.latenighthack.viewmodel.app.view.onClick
+                    |import android.widget.*
+                    |import android.widget.Button
+                    |import android.widget.TextView
+                    |import com.latenighthack.viewmodel.ActivitiesProvider
+                    |import com.latenighthack.viewmodel.common.*
+                    |import com.latenighthack.viewmodel.common.ViewModelReporter
+                    |import com.latenighthack.viewmodel.items
+                    |import com.latenighthack.viewmodel.views.*
+                    |import gg.roll.CoreBaseActivity
+                    |import gg.roll.MainAndroidNavigator
+                    |import gg.roll.R
+                    |import gg.roll.view.*
+                    |import gg.roll.viewmodel.*
+                    |import gg.roll.viewmodel.core.create
+                    |import gg.roll.viewmodel.core.Navigator
+                    |import gg.roll.viewmodel.core.ViewModelModule
+                    |import kotlinx.coroutines.flow.Flow
                     |
-                    |abstract class $activityClassName : BaseActivity<$vmInterfaceName, $vmInterfaceName.State, $vmInterfaceName.Args>() {
-                    |    abstract override fun createViewModel(): $vmInterfaceName
-                    |    
+                    |class $activityClassName : CoreBaseActivity<$vmInterfaceName, $vmInterfaceName.State, $vmInterfaceName.Args>() {
+                    |    override fun createViewModel(): $vmInterfaceName {
+                    |        return create${vm.name.toUpperCamelCase()}ViewModel(
+                    |            core,
+                    |            this,
+                    |            args<$vmInterfaceName.Args>()
+                    |        ).viewModel
+                    |    }
+                    |
+                    |    override val navigator: Navigator
+                    |        get() = MainAndroidNavigator(this, application as ActivitiesProvider)
+                    |
                     |$ignoredChildren
                     |
                     |${writeViewModelDeclare(vm)}
@@ -287,7 +297,7 @@ class AndroidActivityGenerator(
                     |    }
                     |    
                     |    override fun createView(context: Context, viewModel: $vmInterfaceName) = VerticalLayout {
-                    |        Titlebar("${vm.name.toUpperSpaced()}")
+                    |        //Titlebar("${vm.name.toUpperSpaced()}")
                     |        
                     |${writeViewModelCreate(allVms, vm)}
                     |

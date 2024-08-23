@@ -154,6 +154,12 @@ class ViewModelProcessor(
                     reporterProxyGenerator.generate(viewModels)
 //                }
 
+                if (projectType.startsWith("android")) {
+                    info.writeln("Writing Android activities")
+                    val androidActivityGenerator = AndroidActivityGenerator(dependencies, codeGenerator, log, options)
+
+                    androidActivityGenerator.generate(viewModels)
+                }
                 if (projectType.startsWith("js")) {
                     info.writeln("Writing JS Vue Proxies")
                     val vueProxyGenerator = VueRefProxyGenerator(dependencies, codeGenerator, log, options)
@@ -167,23 +173,6 @@ class ViewModelProcessor(
                     val iosVcGenerator = SwiftViewControllerGenerator(dependencies, codeGenerator, log, options)
 
                     iosVcGenerator.generate(viewModels)
-                }
-
-                if (projectName.startsWith("android")) {
-                    info.writeln("Writing Android activities")
-                    val modelInputStream = FileInputStream(
-                        projectFolder.parentFile.resolve(
-                            "viewmodel/build/generated/ksp/android" +
-                                    "/android${projectType.toUpperCamelCase()}" +
-                                    "/resources/com/latenighthack/viewmodel/gen/models.binpb"
-                        )
-                    )
-
-                    val viewModels = AllDeclaredViewModels.fromByteArray(modelInputStream.readAllBytes()).models
-
-                    val androidActivityGenerator = AndroidActivityGenerator(dependencies, codeGenerator, log, options)
-
-                    androidActivityGenerator.generate(viewModels)
                 }
             }
 

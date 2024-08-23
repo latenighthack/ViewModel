@@ -11,9 +11,11 @@ class SwiftViewControllerGenerator(
     private val log: KSPLogger,
     private val options: Map<String, String>
 ) {
-    val buttonViewClass = "UIButton"
-    val textViewClass = "UILabel"
-    val editTextClass = "UITextView"
+    val buttonViewClass = "PrimaryButton"
+    val textViewClass = "StandardLabel"
+    val photoViewClass = "ProfilePhotoView"
+    val editTextClass = "StandardTextField"
+    val switchViewClass = "UISwitch"
     val collectionViewClass = "UICollectionView"
     val collectionViewCellBaseClass = "UICollectionViewCell"
     val baseViewControllerClass = "CoreNavigableViewController"
@@ -25,8 +27,9 @@ class SwiftViewControllerGenerator(
         val stateViewDeclare = nonEditStateProperties(vm).joinToString("\n") {
             when (it.type!!.simpleName) {
                 "String" -> "    private var ${it.name}View: ${textViewClass}!"
+                "ProfilePhotoModel" -> "    private var ${it.name}View: ${photoViewClass}!"
                 "Boolean" -> if (it.name.endsWith("Checked")) {
-                    "    private var ${it.name.getActionParts().noun.toCamelCase()}View: ${textViewClass}!"
+                    "    private var ${it.name.getActionParts().noun.toCamelCase()}View: ${switchViewClass}!"
                 } else {
                     "    // todo: ${it.name}"
                 }
@@ -74,8 +77,7 @@ class SwiftViewControllerGenerator(
         val primaryDirection = if (primaryIsVertical) "Vertical" else "Horizontal"
 
         val actionViewCreate = vm.actions.joinToString("\n") {
-            """|        self.${it.name!!.noun.toCamelCase()}View = ${buttonViewClass}()
-               |            .setTitle("${it.name.noun.toUpperSpaced()}")
+            """|        self.${it.name!!.noun.toCamelCase()}View = ${buttonViewClass}(text: "${it.name.noun.toUpperSpaced()}")
                |            .addTo(${parentView})
                |            .disableAutoresizingConstraints()
                |            .constrain${secondaryDirection}(to${secondaryDirection}Of: ${parentView}, useSafeArea: true)
@@ -89,12 +91,17 @@ class SwiftViewControllerGenerator(
                             |            .disableAutoresizingConstraints()
                             |            .constrain${secondaryDirection}(to${secondaryDirection}Of: ${parentView}, useSafeArea: true)"""
                     .trimMargin()
+                "ProfilePhotoModel" -> """        self.${it.name}View = ${photoViewClass}()
+                            |            .addTo(${parentView})
+                            |            .disableAutoresizingConstraints()
+                            |            .constrain${secondaryDirection}(to${secondaryDirection}Of: ${parentView}, useSafeArea: true)"""
+                    .trimMargin()
                 else -> "        // todo: ${it.name}"
             }
         }
         val mutatorViewCreate = vm.mutations.joinToString("\n") {
             when (it.parameterType!!.simpleName) {
-                "String" -> """        self.${it.name!!.noun.toCamelCase()}View = ${editTextClass}()
+                "String" -> """        self.${it.name!!.noun.toCamelCase()}View = ${editTextClass}(placeholder: "${it.name.noun.toUpperSpaced()}")
                     |            .addTo(${parentView})
                     |            .disableAutoresizingConstraints()
                     |            .constrainHeight(toConstant: 44.0)
@@ -122,6 +129,7 @@ class SwiftViewControllerGenerator(
         } + nonEditStateProperties(vm).mapNotNull {
             when (it.type!!.simpleName) {
                 "String" -> "${it.name}View"
+                "ProfilePhotoModel" -> "${it.name}View"
                 else -> null
             }
         } + vm.mutations.mapNotNull {
@@ -228,6 +236,7 @@ class SwiftViewControllerGenerator(
         val stateViewUpdate = nonEditStateProperties(vm).joinToString("\n") {
             when (it.type!!.simpleName) {
                 "String" -> "        self.${it.name}View.text = state.${it.name}"
+                "ProfilePhotoModel" -> "        self.${it.name}View.photo = state.${it.name}"
                 "Boolean" -> if (it.name.endsWith("Enabled")) {
                     "        self.${it.name.getActionParts().noun.toCamelCase()}View.isEnabled = state.${it.name}"
                 } else if (it.name.endsWith("Checked")) {
@@ -293,11 +302,16 @@ class SwiftViewControllerGenerator(
                     |class ${vcClassName}: ${baseViewControllerClass}<${vm.declaration!!.simpleName}, ${vm.declaration.simpleName}State, ${vm.declaration.simpleName}Args> {
                     |${writeViewModelDeclare(vm)}
                     |    override func createViewModel() -> ${vm.declaration!!.simpleName} {
-                    |        return ${vm.name.toUpperCamelCase()}ReporterProxy(original: ${vm.name.toUpperCamelCase()}ViewModel(
-                    |            args: self.args,
-                    |            basicStore: self.core.simpleStore,
-                    |            service: self.core.dummyService
-                    |        ), reporter: self.reporter)
+                    |        return ${vm.name.toUpperCamelCase()}ReporterProxy(
+                    |            original: KmpComponentCreate${vm.name.toUpperCamelCase()}ViewModelModuleKt
+                    |                .create${vm.name.toUpperCamelCase()}ViewModel(
+                    |                    core: self.core,
+                    |                    navigatorModule: self,
+                    |                    args: self.args
+                    |                )
+                    |                .viewModel,
+                    |            reporter: self.reporter
+                    |        )
                     |    }
                     |
                     |    override func setup() {
