@@ -872,14 +872,6 @@ public extension UIView {
     }
 }
 
-public extension UIStatusBarStyle {
-    static var appDefaultStyle: UIStatusBarStyle {
-        get {
-            return themedColors.statusBarDefaultTheme
-        }
-    }
-}
-
 public extension UIColor {
     
     var hue: CGFloat {
