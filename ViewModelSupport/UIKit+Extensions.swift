@@ -12,83 +12,10 @@ private var UITextFieldChangeKey = 2
 private var GestureDelegateKey = 3
 private var UILongPressKey = 4
 
-public protocol ThemedColors {
-    var isDark: Bool { get }
-    var statusBarDefaultTheme: UIStatusBarStyle { get }
-    var shadowColor: UIColor { get }
-    var primaryTextColor: UIColor { get }
-    var blackIfLightMode: UIColor { get }
-    var whiteIfLightMode: UIColor { get }
-    var secondaryTextColor: UIColor { get }
-    var tertiaryTextColor: UIColor { get }
-    var statusBarColor: UIColor { get }
-    var navigationBarColor: UIColor { get }
-    var backgroundColor: UIColor { get }
-    var backgroundHighlightColor: UIColor { get }
-    var tabBackgroundColor: UIColor { get }
-    var tabIconColor: UIColor { get }
-    var tabIconSelectedColor: UIColor { get }
-    var contrastAccentColor: UIColor { get }
-    var lightAccentColor: UIColor { get }
-    var shadowAccentColor: UIColor { get }
-}
-
 fileprivate extension UIImage {
     static func button(named: String) -> UIImage {
         return UIImage(named: named)!
             .resizableImage(withCapInsets: .init(top: 20.0, left: 20.0, bottom: 20.0, right: 20.0), resizingMode: .stretch)
-    }
-}
-
-public struct LightThemedColors: ThemedColors {
-    public var isDark: Bool = false
-    public var statusBarDefaultTheme: UIStatusBarStyle = .darkContent
-    public var blackIfLightMode: UIColor = .fromRgb(0x000000)
-    public var whiteIfLightMode: UIColor = .fromRgb(0xffffff)
-    public var shadowColor: UIColor = .fromRgb(0x58585B)
-    public var primaryTextColor: UIColor = .fromRgb(0x58585B)
-    public var secondaryTextColor: UIColor = .fromRgb(0x9B9CA2)
-    public var tertiaryTextColor: UIColor = .fromRgb(0xBAB9BF)
-    public var statusBarColor: UIColor = .fromRgb(0xd4d4d4)
-    public var navigationBarColor: UIColor = .fromRgb(0x303030)
-    public var backgroundColor: UIColor = .fromRgb(0xE9EDEF)
-    public var backgroundHighlightColor: UIColor = .fromRgb(0xDFE2E5)
-    public var tabBackgroundColor: UIColor = .fromRgb(0xDFE2E5)
-    public var tabIconColor: UIColor = .fromRgb(0x55565A)
-    public var tabIconSelectedColor: UIColor = .fromRgb(0x6B00EA)
-    public var contrastAccentColor: UIColor = .fromRgb(0x8b64ff)
-    public var lightAccentColor: UIColor = .fromRgb(0x8E5FFF)
-    public var shadowAccentColor: UIColor = .fromRgb(0xA17BFF)
-}
-
-public struct DarkThemedColors: ThemedColors {
-    public var isDark: Bool = true
-    public var statusBarDefaultTheme: UIStatusBarStyle = .lightContent
-    public var blackIfLightMode: UIColor = .fromRgb(0xffffff)
-    public var whiteIfLightMode: UIColor = .fromRgb(0x000000)
-    public var shadowColor: UIColor = .fromRgb(0x000000)
-    public var primaryTextColor: UIColor = .fromRgb(0xBBB9BF)
-    public var secondaryTextColor: UIColor = .fromRgb(0x88878E)
-    public var tertiaryTextColor: UIColor = .fromRgb(0x58585B)
-    public var statusBarColor: UIColor = .fromRgb(0x191b1d)
-    public var navigationBarColor: UIColor = .fromRgb(0x303030)
-    public var backgroundColor: UIColor = .fromRgb(0x111213)
-    public var backgroundHighlightColor: UIColor = .fromRgb(0x222123)
-    public var tabBackgroundColor: UIColor = .fromRgb(0x222123)
-    public var tabIconColor: UIColor = .fromRgb(0x828D90)
-    public var tabIconSelectedColor: UIColor = .fromRgb(0x7A44FF)
-    public var contrastAccentColor: UIColor = .fromRgb(0x7A44FF)
-    public var lightAccentColor: UIColor = .fromRgb(0x550BBB)
-    public var shadowAccentColor: UIColor = .fromRgb(0x1b0947)
-}
-
-var themedColors: ThemedColors = LightThemedColors()
-
-public func updateTheme(isDark: Bool) {
-    if isDark {
-        themedColors = DarkThemedColors()
-    } else {
-        themedColors = LightThemedColors()
     }
 }
 
@@ -121,14 +48,6 @@ class UIButtonActionCallback {
     
     @objc func invoke() {
         self.callback()
-    }
-}
-
-extension UIView {
-    public var isDark: Bool {
-        get {
-            return themedColors.isDark
-        }
     }
 }
 
@@ -764,10 +683,36 @@ public extension UIView {
         return constraints
     }
 
+    enum UseLayoutGuide {
+        case standard
+        case safeArea
+        case margins
+        case readable
+    }
+
     @discardableResult
-    func constrainHorizontal(toHorizontalOf view: UIView, insetLeadingBy insetLeading: CGFloat = 0.0, insetTrailingBy insetTrailing: CGFloat = 0.0, useSafeArea: Bool = false) -> Self {
-        let leadingAnchor = useSafeArea ? view.safeAreaLayoutGuide.leadingAnchor : view.leadingAnchor
-        let trailingAnchor = useSafeArea ? view.safeAreaLayoutGuide.trailingAnchor : view.trailingAnchor
+    func constrainHorizontal(
+        toHorizontalOf view: UIView,
+        insetLeadingBy insetLeading: CGFloat = 0.0,
+        insetTrailingBy insetTrailing: CGFloat = 0.0,
+        useGuide: UseLayoutGuide = .standard
+    ) -> Self {
+        var layoutGuide: UILayoutGuide? = nil
+
+        switch useGuide {
+        case .standard:
+            layoutGuide = nil
+        case .safeArea:
+            layoutGuide = view.safeAreaLayoutGuide
+        case .margins:
+            layoutGuide = view.layoutMarginsGuide
+        case .readable:
+            layoutGuide = view.readableContentGuide
+        }
+
+        let leadingAnchor = layoutGuide?.leadingAnchor ?? view.leadingAnchor
+        let trailingAnchor = layoutGuide?.trailingAnchor ?? view.trailingAnchor
+
         NSLayoutConstraint.activate([
             self.leadingAnchor.constraint(equalTo: leadingAnchor, constant: insetLeading),
             self.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -insetTrailing)
@@ -776,9 +721,28 @@ public extension UIView {
     }
 
     @discardableResult
-    func constrainVertical(toVerticalOf view: UIView, insetTopBy insetTop: CGFloat = 0.0, insetBottomBy insetBottom: CGFloat = 0.0, useSafeArea: Bool = false) -> Self {
-        let topAnchor = useSafeArea ? view.safeAreaLayoutGuide.topAnchor : view.topAnchor
-        let bottomAnchor = useSafeArea ? view.safeAreaLayoutGuide.bottomAnchor : view.bottomAnchor
+    func constrainVertical(
+        toVerticalOf view: UIView,
+        insetTopBy insetTop: CGFloat = 0.0,
+        insetBottomBy insetBottom: CGFloat = 0.0,
+        useGuide: UseLayoutGuide = .standard
+    ) -> Self {
+        var layoutGuide: UILayoutGuide? = nil
+
+        switch useGuide {
+        case .standard:
+            layoutGuide = nil
+        case .safeArea:
+            layoutGuide = view.safeAreaLayoutGuide
+        case .margins:
+            layoutGuide = view.layoutMarginsGuide
+        case .readable:
+            layoutGuide = view.readableContentGuide
+        }
+
+        let topAnchor = layoutGuide?.topAnchor ?? view.topAnchor
+        let bottomAnchor = layoutGuide?.bottomAnchor ?? view.bottomAnchor
+
         NSLayoutConstraint.activate([
             self.topAnchor.constraint(equalTo: topAnchor, constant: insetTop),
             self.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -insetBottom)
@@ -1018,165 +982,6 @@ public extension UIColor {
             blue: CGFloat(Double(((color & 0xff) >> 0)) / 255.0),
             alpha: CGFloat(Double(((color & 0xff000000) >> 24)) / 255.0)
         )
-    }
-    
-    
-    class var okColor: UIColor {
-        get {
-            return UIColor.fromRgb(0x00E94B)
-        }
-    }
-    
-    class var warningColor: UIColor {
-        get {
-            return UIColor.fromRgb(0xFFAE07)
-        }
-    }
-    
-    class var errorColor: UIColor {
-        get {
-            return UIColor.fromRgb(0xFF2A2A)
-        }
-    }
-    
-    class var accentColor: UIColor {
-        get {
-            return UIColor.fromRgb(0x7000FF)
-        }
-    }
-    
-    class var disabledAccentColor: UIColor {
-        get {
-            return UIColor.fromRgb(0x6451A5)
-        }
-    }
-    
-    class var darkAccentColor: UIColor {
-        get {
-            return UIColor.fromRgb(0x5304B8)
-        }
-    }
-    
-    class var googleBlue: UIColor {
-        get {
-            return UIColor.fromRgb(0x4285F4)
-        }
-    }
-    
-    class var overlayButtonBackgroundColor: UIColor {
-        get {
-            UIColor.fromRgb(0x141618).withAlphaComponent(0.72)
-        }
-    }
-    
-    private class var theme: ThemedColors {
-        get {
-            return themedColors
-        }
-    }
-    
-    // light mode
-    /* */
-    class var primaryTextColor: UIColor {
-        get {
-            return theme.primaryTextColor
-        }
-    }
-    
-    class var shadowColor: UIColor {
-        get {
-            return theme.shadowColor
-        }
-    }
-    
-    class var blackIfLightMode: UIColor {
-        get {
-            return theme.blackIfLightMode
-        }
-    }
-    
-    class var whiteIfLightMode: UIColor {
-        get {
-            return theme.whiteIfLightMode
-        }
-    }
-    
-    class var secondaryTextColor: UIColor {
-        get {
-            return theme.secondaryTextColor
-        }
-    }
-    
-    class var tertiaryTextColor: UIColor {
-        get {
-            return theme.tertiaryTextColor
-        }
-    }
-    
-    class var statusBarColor: UIColor {
-        get {
-            return theme.statusBarColor
-        }
-    }
-    
-    class var navigationBarColor: UIColor {
-        get {
-            return theme.navigationBarColor
-        }
-    }
-    
-    class var backgroundColor: UIColor {
-        get {
-            return theme.backgroundColor
-        }
-    }
-    
-    class var backgroundHighlightColor: UIColor {
-        get {
-            return theme.backgroundHighlightColor
-        }
-    }
-    
-    class var tabBackgroundColor: UIColor {
-        get {
-            return theme.tabBackgroundColor
-        }
-    }
-    
-    class var tabIconColor: UIColor {
-        get {
-            return theme.tabIconColor
-        }
-    }
-    
-    class var tabIconSelectedColor: UIColor {
-        get {
-            return theme.tabIconSelectedColor
-        }
-    }
-    
-    class var contrastAccentColor: UIColor {
-        get {
-            return theme.contrastAccentColor
-        }
-    }
-    
-    class var alwaysDarkColor: UIColor {
-        get {
-            return .fromRgb(0x17191B)
-        }
-    }
-    
-    class var lightAccentColor: UIColor {
-        get {
-            return theme.lightAccentColor
-        }
-    }
-    
-    class var shadowAccentColor: UIColor {
-        get {
-            return theme.shadowAccentColor
-        }
     }
 }
 
