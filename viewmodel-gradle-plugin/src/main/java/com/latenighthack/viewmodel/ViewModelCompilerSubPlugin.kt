@@ -8,6 +8,7 @@ import com.latenighthack.viewmodel.ViewModelGradlePlugin.Companion.SNAPSHOT
 import com.latenighthack.viewmodel.ViewModelGradlePlugin.Companion.VIEWMODEL_VERSION
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -40,7 +41,7 @@ internal class ViewModelCompilerSubPlugin : KotlinCompilerPluginSupportPlugin {
         return true
     }
 
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
     override fun getPluginArtifact(): SubpluginArtifact {
         checkKotlinVersion(myproject.kotlinExtension.compilerVersion.get())
         return SubpluginArtifact(

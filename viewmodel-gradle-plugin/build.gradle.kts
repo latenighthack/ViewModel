@@ -50,7 +50,7 @@ mavenPublishing {
     coordinates(
         libs.versions.groupId.get(),
         "gradle-plugin",
-        "${libs.versions.viewmodelGradle.get()}-${libs.versions.kotlin.get()}"
+        "0.0.7-2.1.0"//${libs.versions.viewmodelGradle.get()}-${libs.versions.kotlin.get()}"
     )
     // publishToMavenCentral(SonatypeHost.S01) for publishing through s01.oss.sonatype.org
     if (enableSigning) {

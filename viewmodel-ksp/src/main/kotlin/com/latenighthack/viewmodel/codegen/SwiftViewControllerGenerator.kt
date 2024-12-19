@@ -148,6 +148,7 @@ class SwiftViewControllerGenerator(
         |            ofViews: [
         |${allViews.joinToString(",\n") { "|                self.$it" }}
         |            ],
+        |            separatedBy: 16.0,
         |            startAt: ${parentView}.safeAreaLayoutGuide.$primaryStartAnchor,
         |            endAt: ${parentView}.safeAreaLayoutGuide.$primaryEndAnchor
         |        )

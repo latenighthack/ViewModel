@@ -38,6 +38,7 @@ import com.latenighthack.viewmodel.codegen.v1.ViewModelStateProperty
 import com.latenighthack.viewmodel.codegen.v1.fromByteArray
 import java.io.FileInputStream
 import kotlin.random.Random
+import kotlin.random.nextUBytes
 import kotlin.random.nextUInt
 
 fun KSClassDeclaration.toClassDeclaration() = ClassDeclaration(simpleName.asString(), qualifiedName!!.asString())
@@ -107,20 +108,21 @@ class ViewModelProcessor(
 
     val navigatorClassName: String get() = options.get("ViewModel_NavigatorClassName") ?: "com.latenighthack.viewmodel.Navigator"
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     override fun finish() {
         super.finish()
 
         codeGenerator.createNewFile(
             dependencies,
             "codegen",
-            "dummy", "txt"
+            "dummy_${Random.nextUInt().toString(16)}", "txt"
         )
             .close()
 
         codeGenerator.createNewFile(
             dependencies,
             "com.latenighthack.viewmodel.gen",
-            "finish_log", "txt")
+            "finish_log_${Random.nextUBytes(1).first().toString(16)}", "txt")
         .also { info ->
             val dummyFile = codeGenerator.generatedFile.first()
             val buildTargetFolder = dummyFile.parentFile.parentFile.parentFile // ie. androidDebug, commonMain
