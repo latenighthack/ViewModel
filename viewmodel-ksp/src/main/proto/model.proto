@@ -21,6 +21,9 @@ message ViewModelDeclaration {
   repeated ViewModelChildDeclaration ignoredChildren = 11;
   string navigationMethodName = 12;
   string webPath = 13;
+  Type navigationResponseType = 14;
+
+  int32 nameHashCode = 15;
 }
 
 message ViewModelState {

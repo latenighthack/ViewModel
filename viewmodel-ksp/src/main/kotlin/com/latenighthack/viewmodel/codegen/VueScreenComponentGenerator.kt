@@ -91,7 +91,7 @@ class VueScreenComponentGenerator(
                 |const props = defineProps({
                 |    ${vm.argsType?.properties?.joinToString(", ") { "\"${it.name}\": ${it.type?.argTypeName}" }}
                 |});
-                |const vm = vueModels.${vm.name.toCamelCase()}ViewModel(Object.assign({}, props, query), core, navigator, shallowReactive, onUnmounted);
+                |const vm = models.${vm.name.toCamelCase()}ViewModel(Object.assign({}, props, query), core, navigator, shallowReactive, onUnmounted);
                 """.trimMargin()
             } else {
                 """
@@ -105,6 +105,10 @@ class VueScreenComponentGenerator(
                 .firstOrNull { it.name?.noun == "item" && it.name.verb == "tapped" }?.let {
                     " @click=\"vm.${it.methodName}()\""
                 } ?: ""
+
+            val listHelpers = vm.lists.flatMap { it.allowableTypes }
+                .distinctBy { it.qualifiedName }
+                .joinToString("\n") { "function is${it.simpleName.asStrippedViewModelString().toUpperCamelCase()}(instance) { return instance.__type === ${it.qualifiedName.hashCode()}; }" }
 
             codeGenerator.createNewFile(
                 dependencies,
@@ -130,14 +134,17 @@ class VueScreenComponentGenerator(
                     |
                     |<script setup>
                     |import { routeLocationKey, useRoute } from "vue-router";
-                    |import { vueModels } from "../../app-web";
                     |import { inject, shallowReactive, onUnmounted, defineProps } from "vue";
-                    |${allChildTypes.joinToString("\n") { "import ${it}Vue from \"./${it}.vue\";" }}
+                    |${allChildTypes.distinct().joinToString("\n") { "import ${it}Vue from \"./${it}View.vue\";" }}
                     |
                     |const route = useRoute();
                     |const core = inject("core");
+                    |const models = inject("models");
                     |const navigator = inject("navigator");
                     |const query = route.query;
+                    |
+                    |// helpers
+                    |${listHelpers}
                     |
                     |${vmDefinition}
                     |</script>
@@ -149,8 +156,9 @@ class VueScreenComponentGenerator(
 
         val componentImports = viewModels
             .filter { it.isNavigable }
+            .distinctBy { it.name }
             .joinToString("\n") {
-                "import ${it.name.toUpperCamelCase()}Vue from \"../gen/components/${it.name.toUpperCamelCase()}.vue\";"
+                "import ${it.name.toUpperCamelCase()}Vue from \"../gen/components/${it.name.toUpperCamelCase()}View.vue\";"
             }
 
         fun toPath(vm: ViewModelDeclaration): String {

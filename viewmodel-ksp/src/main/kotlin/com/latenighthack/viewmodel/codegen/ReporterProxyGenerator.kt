@@ -70,6 +70,12 @@ class ReporterProxyGenerator(
                 .mapNotNull { vm ->
                     if (!vm.isNavigable) {
                         null
+                    } else if (vm.navigationResponseType != null) {
+                        """
+                        |    override suspend fun navigateTo(${vm.navigationMethodName}: ${vm.argsType?.type?.qualifiedName}): ${vm.navigationResponseType.qualifiedName} {
+                        |        return delegatedNavigator.navigateTo(${vm.navigationMethodName})
+                        |    }
+                        """.trimMargin()
                     } else {
                         """
                         |    override fun navigateTo(${vm.navigationMethodName}: ${vm.argsType?.type?.qualifiedName}) {
@@ -103,6 +109,13 @@ class ReporterProxyGenerator(
                 .mapNotNull { vm ->
                     if (!vm.isNavigable) {
                         null
+                    } else if (vm.navigationResponseType != null) {
+                        """
+                        |    override suspend fun navigateTo(${vm.navigationMethodName}: ${vm.argsType?.type?.qualifiedName}): ${vm.navigationResponseType.qualifiedName} {
+                        |        NavigationReporter.trackNavigationTo${vm.navigationMethodName.toUpperCamelCase()}(reporter)
+                        |        return super.navigateTo(${vm.navigationMethodName})
+                        |    }
+                        """.trimMargin()
                     } else {
                         """
                         |    override fun navigateTo(${vm.navigationMethodName}: ${vm.argsType?.type?.qualifiedName}) {

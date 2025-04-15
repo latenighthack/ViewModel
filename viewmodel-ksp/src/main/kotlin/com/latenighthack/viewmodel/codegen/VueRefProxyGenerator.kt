@@ -42,17 +42,16 @@ class VueRefProxyGenerator(
                 |            unmountCallback,
                 |            bindingScope,
                 |            ${it.name.toUpperCamelCase()}ReporterProxy(
-                |                viewModelCreator.${it.name.toCamelCase()}ViewModel(jsonTo${it.name.toUpperCamelCase()}Args(props), resolver, navigator, bindingScope, extras), reporter
+                |                create${it.name.toUpperCamelCase()}ViewModel(
+                |                    resolver,
+                |                    object : NavigatorModule { override val navigator: Navigator get() = navigator },
+                |                    jsonTo${it.name.toUpperCamelCase()}Args(props),
+                |                    ${if (it.navigationResponseType != null) { "{}" } else ""}
+                |                ).viewModel,
+                |                reporter
                 |            )
                 |        )
                 |    }
-                """.trimMargin()
-            }
-        val viewModelCreatorStubs = viewModels
-            .filter { it.isNavigable }
-            .joinToString("\n") {
-                """
-                |    fun ${it.name.toCamelCase()}ViewModel(args: ${it.argsType?.type?.qualifiedName}, resolver: ${resolverClassName}, navigator: ${navigatorClassName}, bindingScope: com.latenighthack.viewmodel.common.BindingScope, extras: dynamic): ${it.declaration?.qualifiedName}
                 """.trimMargin()
             }
 
@@ -71,6 +70,9 @@ class VueRefProxyGenerator(
                     |import com.latenighthack.viewmodel.*
                     |import com.latenighthack.viewmodel.common.*
                     |import com.latenighthack.viewmodel.proxy.*
+                    |import gg.roll.viewmodel.core.NavigatorModule
+                    |import gg.roll.viewmodel.*
+                    |import $navigatorClassName
                     |import kotlinx.browser.window
                     |import kotlinx.coroutines.*
                     |import kotlinx.coroutines.flow.Flow
@@ -81,13 +83,9 @@ class VueRefProxyGenerator(
                     |
                     |@kotlin.js.ExperimentalJsExport
                     |@JsExport
-                    |class ViewModelVueCreator(val viewModelCreator: IViewModelCreator, val reporter: ViewModelReporter) {
+                    |class ViewModelVueCreator(val reporter: ViewModelReporter) {
                     |
                     |${vueModelCreatorMethods}
-                    |}
-                    |
-                    |interface IViewModelCreator {
-                    |${viewModelCreatorStubs}
                     |}
                     |""".trimMargin()
             )
@@ -348,11 +346,6 @@ class VueRefProxyGenerator(
                     |import kotlin.js.json
                     |
                     |$argConverter
-                    |
-                    |@OptIn(DelicateCoroutinesApi::class)
-                    |@kotlin.js.ExperimentalJsExport
-                    |@JsExport
-                    |public fun is${vm.name.toUpperCamelCase()}(instance: dynamic): Boolean = instance.__type == ${vm.declaration.qualifiedName.hashCode()}
                     |
                     |@OptIn(DelicateCoroutinesApi::class)
                     |@kotlin.js.ExperimentalJsExport

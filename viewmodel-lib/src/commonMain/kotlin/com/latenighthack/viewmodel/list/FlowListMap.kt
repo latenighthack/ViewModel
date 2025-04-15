@@ -92,7 +92,12 @@ public class LazyMapPreviousNextList<T, U>(
             val oldNext = nextNext
 
             didHaveNext = wrapped.hasNext()
-            nextNext = wrapped.next()
+
+            nextNext = if (didHaveNext) {
+                wrapped.next()
+            } else {
+                null
+            }
 
             val result = transform(oldNext!!, previous, nextNext)
 

@@ -73,6 +73,11 @@ kotlin {
             }
         }
 
+        jvmToolchain(17)
+
+        jvm() {
+        }
+
         val commonMain by getting {
             dependencies {
                 api(projects.viewmodelAnnotations)

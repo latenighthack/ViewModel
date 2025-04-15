@@ -4,7 +4,22 @@ import kotlin.reflect.KClass
 
 public annotation class Extra(val key: String, val value: String)
 
-public annotation class Extras(vararg val extras: Extra)
+public object ScreenTypeConstants {
+    public const val User: String = "USER"
+    public const val Hero: String = "HERO"
+    public const val List: String = "LIST"
+}
+public object PropertyConstants {
+    public const val Search: String = "SEARCH"
+}
+
+public annotation class Extras(vararg val extras: Extra) {
+    public companion object {
+        public val PropertyKey: String = "PropertyKey"
+        public val ScreenTypeKey: String = "ScreenTypeKey"
+        public val ScreenType: ScreenTypeConstants = ScreenTypeConstants
+    }
+}
 
 @Target(AnnotationTarget.CLASS)
 public annotation class DeclareViewModel(val webPath: String = "", val extras: Extras = Extras())

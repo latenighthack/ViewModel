@@ -14,6 +14,7 @@ import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSName
 import com.google.devtools.ksp.symbol.KSType
@@ -79,9 +80,8 @@ fun String.getActionParts(): ActionName {
     return ActionName(noun, verb ?: "")
 }
 
-fun KSName.asStrippedViewModelString(): String {
-    var str = this.asString()
-
+fun String.asStrippedViewModelString(): String {
+    var str = this
     if (str.startsWith("I") && str[1].isUpperCase()) {
         str = str.substring(1)
     }
@@ -96,6 +96,12 @@ fun KSName.asStrippedViewModelString(): String {
 
     return str
 }
+
+fun KSName.asStrippedViewModelString(): String {
+    return this.asString().asStrippedViewModelString()
+}
+
+data class NavigatorDefinition(val paramTypeName: String, val paramName: String?, val navigatorReturnType: Type?)
 
 class ViewModelProcessor(
     private val codeGenerator: CodeGenerator,
@@ -144,6 +150,10 @@ class ViewModelProcessor(
             val jsonGenerator = JsonViewModelGenerator(dependencies, codeGenerator, log, options)
             val protoGenerator = ProtoViewModelGenerator(dependencies, codeGenerator, log, options)
 
+            if (projectType.contains("Test")) {
+                return@also
+            }
+
             viewModels?.let { viewModels ->
                 jsonGenerator.generate(viewModels)
                 protoGenerator.generate(viewModels)
@@ -154,6 +164,13 @@ class ViewModelProcessor(
                         ReporterProxyGenerator(dependencies, codeGenerator, projectType.startsWith("js"), log, options)
 
                     reporterProxyGenerator.generate(viewModels)
+
+                info.writeln("Writing view model test harness")
+                    val viewModelTestHarnessGenerator =
+                        ViewModelTestHarnessGenerator(dependencies, codeGenerator, projectType.startsWith("js"), log, options)
+
+                viewModelTestHarnessGenerator.generate(viewModels)
+
 //                }
 
                 if (projectType.startsWith("android")) {
@@ -217,6 +234,12 @@ class ViewModelProcessor(
                     if (it.simpleName.asString() != "navigateTo") {
                         return@mapNotNull null
                     } else {
+                        val navigatorReturnType = if (it.modifiers.contains(Modifier.SUSPEND)) {
+                            it.returnType?.resolve()?.toType()
+                        } else {
+                            null
+                        }
+
                         val param = it.parameters.firstOrNull()
 
                         if (param == null) {
@@ -224,7 +247,7 @@ class ViewModelProcessor(
                         } else {
                             val paramTypeName = param.type.resolve().declaration.qualifiedName!!.asString()
 
-                            Pair(paramTypeName, param.name?.asString())
+                            Pair(paramTypeName, NavigatorDefinition(paramTypeName, param.name?.asString(), navigatorReturnType))
                         }
                     }
                 }
@@ -286,8 +309,11 @@ class ViewModelProcessor(
                             null
                         }
                         val navigatorMethodName = argsType?.qualifiedName?.asString()?.let {
-                            navigatorMapping[it]
+                            navigatorMapping[it]?.paramName
                         } ?: ""
+                        val navigatorReturnType = argsType?.qualifiedName?.asString()?.let {
+                            navigatorMapping[it]?.navigatorReturnType
+                        }
 
                         val actionMethods = vm.getDeclaredFunctions()
                             .mapNotNull { method ->
@@ -429,11 +455,17 @@ class ViewModelProcessor(
                                             throw Exception("invalid thing here")
                                         }
 
+                                        fun KSDeclaration.toTypeString() = if (typeParameters.isNotEmpty()) {
+                                            "${qualifiedName!!.asString()}<${typeParameters.map { it.toString() }}>"
+                                        } else {
+                                            qualifiedName!!.asString()
+                                        }
+
                                         ViewModelListDeclaration(
                                             property.simpleName.asString(),
                                             property.type.resolve().toType(),
                                             itemTypes.map { it.toClassDeclaration() },
-                                            property.type.resolve().arguments[0].type!!.resolve().arguments[0].type!!.resolve().declaration.qualifiedName!!.asString()
+                                            property.type.resolve().arguments[0].type!!.resolve().arguments[0].type!!.resolve().declaration.toTypeString()
                                         )
                                     }
                             }
@@ -494,18 +526,20 @@ class ViewModelProcessor(
                             vm.annotations.firstOrNull()?.arguments?.firstOrNull { it.name?.asString() == "webPath" }?.value as? String
 
                         ViewModelDeclaration(
-                            viewModelName,
-                            isNavigable,
-                            vm.toClassDeclaration(),
-                            vmState,
-                            args,
-                            actions,
-                            mutators,
-                            lists,
-                            children,
-                            ignoredChildren,
-                            navigatorMethodName,
-                            webPath ?: ""
+                            name = viewModelName,
+                            isNavigable = isNavigable,
+                            declaration = vm.toClassDeclaration(),
+                            state = vmState,
+                            argsType = args,
+                            actions = actions,
+                            mutations = mutators,
+                            lists = lists,
+                            children = children,
+                            ignoredChildren = ignoredChildren,
+                            navigationMethodName = navigatorMethodName,
+                            webPath = webPath ?: "",
+                            navigationResponseType = navigatorReturnType,
+                            nameHashCode = vm.qualifiedName!!.asString().hashCode(),
                         )
                     })
             }
