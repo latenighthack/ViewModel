@@ -7,10 +7,10 @@
 
 import UIKit
 
-public protocol Spinnerable: AnyObject {
-    func showSpinner()
-    func hideSpinner()
-    func showErrorDialog(error: Error)
+@objc public protocol Spinnerable: AnyObject {
+    @objc func showSpinner()
+    @objc func hideSpinner()
+    @objc func showErrorDialog(error: Error)
 }
 
 public extension UIViewController {
