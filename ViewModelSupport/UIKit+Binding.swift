@@ -29,13 +29,13 @@ public extension UIViewController {
             runOnMain {
                 if spinnerShown {
                     if self.responds(to: #selector(Spinnerable.hideSpinner)) {
-                        self.hideSpinner()
+                        self.perform(#selector(Spinnerable.hideSpinner))
                     }
                 }
                 
                 if let err = error {
                     if self.responds(to: #selector(Spinnerable.showErrorDialog)) {
-                        self.showErrorDialog(error: err)
+                        self.perform(#selector(Spinnerable.showErrorDialog), with: err)
                     }
                 }
             }
@@ -44,7 +44,7 @@ public extension UIViewController {
         if shouldShowSpinner {
             spinnerShown = true
             if self.responds(to: #selector(Spinnerable.showSpinner)) {
-                self.showSpinner()
+                self.perform(#selector(Spinnerable.showSpinner))
             }
         }
     }
