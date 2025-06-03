@@ -7,16 +7,13 @@
 
 import UIKit
 
+public protocol Spinnerable: AnyObject {
+    func showSpinner()
+    func hideSpinner()
+    func showErrorDialog(error: Error)
+}
+
 public extension UIViewController {
-    
-    func showSpinner() {
-    }
-    
-    func hideSpinner() {
-    }
-    
-    func showErrorDialog(error: Error) {
-    }
     
     func performAsyncAction(withSpinner: Bool = true, _ action: (@escaping (Error?) -> Void) -> Void) {
         var shouldShowSpinner = withSpinner
@@ -31,18 +28,24 @@ public extension UIViewController {
             
             runOnMain {
                 if spinnerShown {
-                    self.hideSpinner()
+                    if self.responds(to: #selector(Spinnerable.hideSpinner)) {
+                        self.hideSpinner()
+                    }
                 }
                 
                 if let err = error {
-                    self.showErrorDialog(error: err)
+                    if self.responds(to: #selector(Spinnerable.showErrorDialog)) {
+                        self.showErrorDialog(error: err)
+                    }
                 }
             }
         }
         
         if shouldShowSpinner {
             spinnerShown = true
-            self.showSpinner()
+            if self.responds(to: #selector(Spinnerable.showSpinner)) {
+                self.showSpinner()
+            }
         }
     }
 }
