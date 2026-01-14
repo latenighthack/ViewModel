@@ -1,6 +1,6 @@
 package com.latenighthack.viewmodel.common
 
-public class ViewModelException(
+public open class ViewModelException(
     cause: Throwable,
     public val title: String = "Error",
     override val message: String = cause.message ?: "",

@@ -14,6 +14,9 @@ class VueRefProxyGenerator(
     val navigatorClassName: String get() = options.get("ViewModel_NavigatorClassName") ?: "com.latenighthack.viewmodel.Navigator"
     val resolverClassName: String get() = options.get("ViewModel_ResolverClassName") ?: "com.latenighthack.viewmodel.Core"
 
+    val navigatorPackage = navigatorClassName.split('.').dropLast(1).joinToString(".")
+    val viewModelPackage = navigatorPackage.split('.').dropLast(1).joinToString(".")
+
     fun generate(viewModels: List<ViewModelDeclaration>) {
         val allVms = viewModels
             .map {
@@ -70,8 +73,8 @@ class VueRefProxyGenerator(
                     |import com.latenighthack.viewmodel.*
                     |import com.latenighthack.viewmodel.common.*
                     |import com.latenighthack.viewmodel.proxy.*
-                    |import gg.roll.viewmodel.core.NavigatorModule
-                    |import gg.roll.viewmodel.*
+                    |import $navigatorPackage.NavigatorModule
+                    |import $viewModelPackage.*
                     |import $navigatorClassName
                     |import kotlinx.browser.window
                     |import kotlinx.coroutines.*

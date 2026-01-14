@@ -7,6 +7,10 @@ import com.latenighthack.ktstore.StoreDelegate
 import com.latenighthack.ktstore.createStoreDelegate
 import com.latenighthack.viewmodel.core.store.SimpleStore
 
+interface NavigatorModule {
+    val navigator: Navigator
+}
+
 class Core(private val serverPath: String) {
     private val delegate: StoreDelegate = createStoreDelegate("main_db")
     private val httpClient = HttpRpcClient(serverPath)

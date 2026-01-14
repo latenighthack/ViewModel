@@ -12,10 +12,12 @@ public actual open class NavigatorArgs {
         private var storedValue: T? = null
 
         override fun getValue(thisRef: Any?, property: KProperty<*>): T {
+            println("getting value ${thisRef} ${property.name}")
             return storedValue!!
         }
 
         override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
+            println("SETTING value ${thisRef} ${property.name}")
             storedValue = value
         }
     }

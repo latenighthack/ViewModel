@@ -61,6 +61,9 @@ class ViewModelTestHarnessGenerator(
             )
         }
 
+        val navigatorPackage = navigatorClassName.split('.').dropLast(1).joinToString(".")
+        val viewModelPackage = navigatorPackage.split('.').dropLast(1).joinToString(".")
+
         codeGenerator.createNewFile(
             dependencies,
             "com.latenighthack.viewmodel.proxy",
@@ -75,7 +78,7 @@ class ViewModelTestHarnessGenerator(
                         """
                         |    fun KClass<${vm.declaration!!.qualifiedName}>.create(
                         |       core: ${resolverClassName},
-                        |       navigatorModule: gg.roll.viewmodel.core.NavigatorModule,
+                        |       navigatorModule: $navigatorPackage.NavigatorModule,
                         |       args: ${vm.argsType?.type?.qualifiedName},
                         |       ${if (vm.navigationResponseType != null) { "callback: suspend (${vm.navigationResponseType.qualifiedName}?) -> Unit" } else { "" }}
                         |    ): ${vm.declaration!!.qualifiedName} {
@@ -111,23 +114,22 @@ class ViewModelTestHarnessGenerator(
                     }
                 }
                 .joinToString("\n")
-
             writeln(
                 """
                 |package com.latenighthack.viewmodel.proxy
                 |
                 |import $navigatorClassName
-                |import gg.roll.viewmodel.core.NavigatorModule
                 |import com.latenighthack.viewmodel.common.ViewModelReporter
                 |import com.latenighthack.viewmodel.NavigableViewModel
                 |import com.latenighthack.viewmodel.NavigatorArgs
-                |import gg.roll.viewmodel.*
+                |import $navigatorPackage.NavigatorModule
+                |import $viewModelPackage.*
                 |import kotlin.reflect.KClass
                 |
                 |$createExtensions
                 |
                 |@Suppress("UNCHECKED_CAST")
-                |public inline fun <ViewModelType: NavigableViewModel<*, ArgsType>, ArgsType : NavigatorArgs, ResponseType> createViewModelCallback(core: ${resolverClassName}, navigatorModule: gg.roll.viewmodel.core.NavigatorModule, args: ArgsType, crossinline callback: suspend (ResponseType?) -> Unit): ViewModelType {
+                |public inline fun <ViewModelType: NavigableViewModel<*, ArgsType>, ArgsType : NavigatorArgs, ResponseType> createViewModelCallback(core: ${resolverClassName}, navigatorModule: $navigatorPackage.NavigatorModule, args: ArgsType, crossinline callback: suspend (ResponseType?) -> Unit): ViewModelType {
                 |   return when (args) {
                 |$createCallbackLookup
                 |       else -> TODO()
@@ -135,7 +137,7 @@ class ViewModelTestHarnessGenerator(
                 |}
                 |
                 |@Suppress("UNCHECKED_CAST")
-                |public inline fun <ViewModelType: NavigableViewModel<*, ArgsType>, ArgsType : NavigatorArgs> createViewModel(core: ${resolverClassName}, navigatorModule: gg.roll.viewmodel.core.NavigatorModule, args: ArgsType): ViewModelType {
+                |public inline fun <ViewModelType: NavigableViewModel<*, ArgsType>, ArgsType : NavigatorArgs> createViewModel(core: ${resolverClassName}, navigatorModule: $navigatorPackage.NavigatorModule, args: ArgsType): ViewModelType {
                 |   return when (args) {
                 |$createLookup
                 |       else -> TODO()

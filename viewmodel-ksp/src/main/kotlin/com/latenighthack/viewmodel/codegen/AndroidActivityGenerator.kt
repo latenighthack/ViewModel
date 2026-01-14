@@ -199,6 +199,9 @@ class AndroidActivityGenerator(
         return stateViewUpdate
     }
 
+    val navigatorClassName: String get() = options.get("ViewModel_NavigatorClassName") ?: "com.latenighthack.viewmodel.Navigator"
+    val resolverClassName: String get() = options.get("ViewModel_ResolverClassName") ?: "com.latenighthack.viewmodel.Core"
+
     fun generate(viewModels: List<ViewModelDeclaration>) {
         val allVms = viewModels
             .map {
@@ -246,6 +249,10 @@ class AndroidActivityGenerator(
                 """.trimMargin()
             }
 
+            val navigatorPackage = navigatorClassName.split('.').dropLast(1).joinToString(".")
+            val viewModelPackage = navigatorPackage.split('.').dropLast(1).joinToString(".")
+            val domainPackage = viewModelPackage.split('.').dropLast(1).joinToString(".")
+
             codeGenerator.createNewFile(
                 dependencies,
                 "com.latenighthack.viewmodel.gen.activities",
@@ -254,7 +261,7 @@ class AndroidActivityGenerator(
             ).apply {
                 writeln(
                     """
-                    |package gg.roll.activities
+                    |package $domainPackage.activities
                     |
                     |import android.content.Context
                     |import android.view.View
@@ -266,14 +273,15 @@ class AndroidActivityGenerator(
                     |import com.latenighthack.viewmodel.common.ViewModelReporter
                     |import com.latenighthack.viewmodel.items
                     |import com.latenighthack.viewmodel.views.*
-                    |import gg.roll.CoreBaseActivity
-                    |import gg.roll.MainAndroidNavigator
-                    |import gg.roll.R
-                    |import gg.roll.view.*
-                    |import gg.roll.viewmodel.*
-                    |import gg.roll.viewmodel.core.create
-                    |import gg.roll.viewmodel.core.Navigator
-                    |import gg.roll.viewmodel.core.ViewModelModule
+                    |import $navigatorPackage.NavigatorModule
+                    |import $viewModelPackage.*
+                    |import $domainPackage.CoreBaseActivity
+                    |import $domainPackage.MainAndroidNavigator
+                    |import $domainPackage.R
+                    |import $domainPackage.view.*
+                    |import $navigatorPackage.create
+                    |import $navigatorPackage.Navigator
+                    |import $navigatorPackage.ViewModelModule
                     |import kotlinx.coroutines.flow.Flow
                     |
                     |class $activityClassName : CoreBaseActivity<$vmInterfaceName, $vmInterfaceName.State, $vmInterfaceName.Args>() {

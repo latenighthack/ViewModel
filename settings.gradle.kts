@@ -19,7 +19,7 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id == "com.latenighthack.viewmodel") {
-                useModule("com.latenighthack.viewmodel:gradle-plugin:0.0.7-2.1.0")//${requested.version}")
+                useModule("com.latenighthack.viewmodel:gradle-plugin:0.0.10-2.1.0")//${requested.version}")
             }
         }
     }

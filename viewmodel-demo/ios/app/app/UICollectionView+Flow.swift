@@ -220,7 +220,7 @@ class UICollectionViewFlowListDataSource: Viewmodel_libFlowListDataSource<Viewmo
 //        (boundCell?.viewModelDidChange ?? { _ in })(model)
 //        (cell as? ViewModelBoundCell<any Viewmodel_libViewModel, any>)
 //        (cell as? ViewModelBoundCell)?.viewModelDidChange(model)
-//        (cell as? CloseableCollectionViewCell)?.attach(closeable)
+        (cell as? CloseableCollectionViewCell)?.attach(closeable)
 
         return cell
     }

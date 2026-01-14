@@ -211,16 +211,16 @@ class ReporterProxyGenerator(
                 }
             }
             val lists = vm.lists.joinToString("\n\n") {
-                if (it.allowableTypes.size == 1) {
-                    val vmDecl = it.allowableTypes.map { classDecl -> allVms[classDecl.qualifiedName]!! }.first()
-                    if (it.resolvedDeltaType != "kotlin.Any") {
-                        return@joinToString """
-                        |    override val ${it.propertyName}: Flow<Delta<${it.resolvedDeltaType}>> = original.${it.propertyName}.flowLazyMap { item ->
-                        |        ${vmDecl.name.toUpperCamelCase()}ReporterProxy(item, reporter, "${vm.name}")
-                        |    }
-                        """.trimMargin()
-                    }
-                }
+//                if (it.allowableTypes.size == 1) {
+//                    val vmDecl = it.allowableTypes.map { classDecl -> allVms[classDecl.qualifiedName]!! }.first()
+//                    if (it.resolvedDeltaType != "kotlin.Any") {
+//                        return@joinToString """
+//                        |    override val ${it.propertyName}: Flow<Delta<${it.resolvedDeltaType}>> = original.${it.propertyName}.flowLazyMap { item ->
+//                        |        ${vmDecl.name.toUpperCamelCase()}ReporterProxy(item, reporter, "${vm.name}")
+//                        |    }
+//                        """.trimMargin()
+//                    }
+//                }
                 val typeWrappers = it.allowableTypes
                     .map { classDecl -> allVms[classDecl.qualifiedName]!! }
                     .joinToString("\n") { vmDecl ->
@@ -283,8 +283,8 @@ class ReporterProxyGenerator(
                     |    $navigableScreenName
                     |
                     |    $maybeArgs
-                    |    override val state = original.state
-                    |    override val initialState = original.initialState
+                    |    ${if (vm.state?.type != null) "override val state = original.state" else ""}
+                    |    ${if (vm.state?.type != null) "override val initialState = original.initialState" else ""}
                     |    
                     |$actions
                     |

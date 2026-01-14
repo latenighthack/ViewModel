@@ -245,7 +245,11 @@ class ViewModelProcessor(
                         if (param == null) {
                             return@mapNotNull null
                         } else {
-                            val paramTypeName = param.type.resolve().declaration.qualifiedName!!.asString()
+                            val paramType = param.type
+                            val resolvedParamType = paramType.resolve()
+                            val paramDeclaration = resolvedParamType.declaration
+                            val paramQualifiedName = paramDeclaration.qualifiedName!!
+                            val paramTypeName = paramQualifiedName.asString()
 
                             Pair(paramTypeName, NavigatorDefinition(paramTypeName, param.name?.asString(), navigatorReturnType))
                         }
@@ -272,20 +276,24 @@ class ViewModelProcessor(
 
                         visitedTypes.add(name)
 
-                        val vmTypeArgs = vm.getAllSuperTypes().toList()
-                            .first {
+                        val vmTypeArgs = try {vm.getAllSuperTypes().toList()
+                            .firstOrNull {
                                 val typeName = it.declaration.qualifiedName!!.asString()
 
                                 typeName == "com.latenighthack.viewmodel.NavigableViewModel" ||
                                         typeName == "com.latenighthack.viewmodel.ViewModel"
                             }
-                            .let {
+                            ?.let {
                                 it.arguments
                                     .toList()
                                     .map {
                                         it.type!!.resolve().declaration
                                     }
-                            }
+                            } ?: emptyList()
+                        } catch (e: Exception) {
+                            log.error("here2", vm)
+                            throw e
+                        }
 
                         val isNavigable = vm.getAllSuperTypes()
                             .find { it.declaration.qualifiedName!!.asString() == "com.latenighthack.viewmodel.NavigableViewModel" } != null
@@ -298,10 +306,14 @@ class ViewModelProcessor(
                         val dummySuperType = vm.getAllSuperTypes()
                             .find { it.declaration.qualifiedName!!.asString() == "com.latenighthack.viewmodel.IDummyItemViewModel" }
 
-                        val stateType = if (vmTypeArgs[0] is KSClassDeclaration) {
-                            vmTypeArgs[0] as KSClassDeclaration
+                        val stateType = if (vmTypeArgs.size > 0) {
+                            if (vmTypeArgs[0] is KSClassDeclaration) {
+                                vmTypeArgs[0] as KSClassDeclaration
+                            } else {
+                                (vmTypeArgs[0] as KSTypeParameter).bounds.first().resolve().declaration as KSClassDeclaration
+                            }
                         } else {
-                            (vmTypeArgs[0] as KSTypeParameter).bounds.first().resolve().declaration as KSClassDeclaration
+                            null
                         }
                         val argsType = if (vmTypeArgs.size > 1) {
                             vmTypeArgs[1] as KSClassDeclaration
@@ -362,10 +374,10 @@ class ViewModelProcessor(
                         val viewModelName = vm.simpleName.asStrippedViewModelString()
 
                         val vmState = ViewModelState(
-                            stateType.toClassDeclaration(),
-                            stateType.getDeclaredProperties().map { prop ->
+                            stateType?.toClassDeclaration(),
+                            stateType?.getDeclaredProperties()?.map { prop ->
                                 ViewModelStateProperty(prop.simpleName.asString(), prop.type.resolve().toType())
-                            }.toList()
+                            }?.toList() ?: emptyList()
                         )
 
                         val actions = actionMethods
@@ -401,32 +413,37 @@ class ViewModelProcessor(
                             }
                         val mutators = vm.getDeclaredFunctions()
                             .mapNotNull { method ->
-                                val navigations = (method.annotations.toList()
-                                    .filter { it.annotationType.resolve().declaration.qualifiedName?.asString() != "kotlin.Throws" }
-                                    .firstOrNull()?.arguments?.first()?.value as? java.util.ArrayList<*>)
-                                    ?.map {
-                                        (it as KSType).declaration as KSClassDeclaration
-                                    }
-                                    ?.toList() ?: emptyList()
+                                try {
+                                    val navigations = (method.annotations.toList()
+                                        .filter { it.annotationType.resolve().declaration.qualifiedName?.asString() != "kotlin.Throws" }
+                                        .firstOrNull()?.arguments?.first()?.value as? java.util.ArrayList<*>)
+                                        ?.map {
+                                            (it as KSType).declaration as KSClassDeclaration
+                                        }
+                                        ?.toList() ?: emptyList()
 
-                                if (method.annotations.firstOrNull { it.annotationType.resolve().declaration.qualifiedName?.asString() == "com.latenighthack.viewmodel.annotations.CodegenIgnore" } != null) {
-                                    null
-                                } else if (method.simpleName.asString() == "<init>") {
-                                    null
-                                } else if (!method.isPublic()) {
-                                    null
-                                } else if (method.parameters.size == 1) {
-                                    ViewModelMutation(
-                                        method.simpleName.getActionParts(),
-                                        method.simpleName.asString(),
-                                        method.parameters[0].type.resolve().toType(),
-                                        method.parameters[0].toString(),
-                                        method.modifiers.contains(Modifier.SUSPEND),
-                                        method.toFunctionDeclaration(),
-                                        navigations.map { it.toClassDeclaration() }
-                                    )
-                                } else {
-                                    null
+                                    if (method.annotations.firstOrNull { it.annotationType.resolve().declaration.qualifiedName?.asString() == "com.latenighthack.viewmodel.annotations.CodegenIgnore" } != null) {
+                                        null
+                                    } else if (method.simpleName.asString() == "<init>") {
+                                        null
+                                    } else if (!method.isPublic()) {
+                                        null
+                                    } else if (method.parameters.size == 1) {
+                                        ViewModelMutation(
+                                            method.simpleName.getActionParts(),
+                                            method.simpleName.asString(),
+                                            method.parameters[0].type.resolve().toType(),
+                                            method.parameters[0].toString(),
+                                            method.modifiers.contains(Modifier.SUSPEND),
+                                            method.toFunctionDeclaration(),
+                                            navigations.map { it.toClassDeclaration() }
+                                        )
+                                    } else {
+                                        null
+                                    }
+                                } catch (e: Exception) {
+                                    log.error("here", method)
+                                    throw e
                                 }
                             }
                             .toList()
@@ -449,15 +466,18 @@ class ViewModelProcessor(
 
                                         val t = property.type.resolve()
                                         if (t.arguments.isEmpty()) {
-                                            throw Exception("invalid thing here")
+                                            throw Exception("invalid thing here 1")
                                         }
                                         if (t.arguments[0].type!!.resolve().arguments.isEmpty()) {
-                                            throw Exception("invalid thing here")
+                                            throw Exception("invalid thing here 2")
                                         }
 
                                         fun KSDeclaration.toTypeString() = if (typeParameters.isNotEmpty()) {
                                             "${qualifiedName!!.asString()}<${typeParameters.map { it.toString() }}>"
                                         } else {
+                                            if (qualifiedName == null) {
+                                                log.warn("No qualified name", property)
+                                            }
                                             qualifiedName!!.asString()
                                         }
 
